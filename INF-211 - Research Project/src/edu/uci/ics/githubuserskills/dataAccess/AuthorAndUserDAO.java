@@ -161,11 +161,15 @@ public class AuthorAndUserDAO {
 	{
 		List<String> loginList = new ArrayList<String>();
 		BasicDBList list = getAllLogins();
-		Iterator it = list.iterator();
+		/*Iterator it = list.iterator();
 		while(it.hasNext())
 		{
 			Object obj = it.next();
 			loginList.add(obj.toString());	
+		}*/
+		for(int i=0; i<list.size(); i++)
+		{
+			loginList.add(list.get(i).toString());
 		}
 		return(loginList);
 	}
