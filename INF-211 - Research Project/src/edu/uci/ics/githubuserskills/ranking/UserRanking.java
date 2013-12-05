@@ -1,10 +1,17 @@
 package edu.uci.ics.githubuserskills.ranking;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
+
 public class UserRanking {
+
+	private static final String EXPORT_TXT = "export.txt";
 
 	private String author;
 
@@ -14,7 +21,7 @@ public class UserRanking {
 		this.terms = new LinkedList<TermFrequencyPair>();
 	}
 
-	public void addTermFrequencyPair(TermFrequencyPair frequencyPair) {
+	public void addEntry(TermFrequencyPair frequencyPair) {
 		this.terms.add(frequencyPair);
 	}
 
@@ -34,4 +41,11 @@ public class UserRanking {
 		this.terms = terms;
 	}
 
+	public void exportTextFile() throws IOException {
+		FileWriter writer = new FileWriter(LuceneUtils.getFileDirectoryForUser(this.author) + File.separator + EXPORT_TXT);
+		for (TermFrequencyPair termFreq : this.terms) {
+			writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
+		}
+		writer.close();
+	}
 }
