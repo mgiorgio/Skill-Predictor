@@ -1,7 +1,10 @@
 package edu.uci.ics.githubuserskills.indexing;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -10,35 +13,52 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
 public class RawSkillDataIndexer {
 
-	private IndexWriter indexWriter;
+	private String uniqueExecutionToken;
+
+	private Map<String, IndexWriter> indexWriterForUser;
 
 	public RawSkillDataIndexer() {
+		this.indexWriterForUser = new HashMap<String, IndexWriter>();
 	}
 
-	public void initialize() throws IndexingException {
-		try {
-			this.setIndexWriter(new IndexWriter(this.createDirectory(), this
-					.createIndexWriterConfig()));
-		} catch (IOException e) {
-			throw new IndexingException(e);
-		}
+	public void initialize() {
+		this.initializeUniqueExecutionToken();
 	}
 
-	protected Directory createDirectory() {
-		// TODO Change to Disk.
-		return new RAMDirectory();
+	private void initializeUniqueExecutionToken() {
+		this.setUniqueExecutionToken(String.valueOf(System.currentTimeMillis()));
+	}
+
+	protected IndexWriter createIndexWriterForUser(String user) throws IOException {
+		Directory createDirectoryForUser = this.createDirectoryForUser(user);
+		return new IndexWriter(createDirectoryForUser, this.createIndexWriterConfig());
+	}
+
+	protected Directory createDirectoryForUser(String user) throws IOException {
+		return FSDirectory.open(this.getFileDirectoryForUser(user));
+	}
+
+	private File getFileDirectoryForUser(String user) {
+		return new File("data" + File.separator + this.getUniqueExecutionToken() + File.separator + user);
+	}
+
+	private String getUniqueExecutionToken() {
+		return uniqueExecutionToken;
+	}
+
+	private void setUniqueExecutionToken(String uniqueExecutionToken) {
+		this.uniqueExecutionToken = uniqueExecutionToken;
 	}
 
 	private IndexWriterConfig createIndexWriterConfig() {
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46,
-				this.createAnalyzer());
+		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, this.createAnalyzer());
 
 		config.setOpenMode(OpenMode.CREATE);
 
@@ -49,16 +69,7 @@ public class RawSkillDataIndexer {
 		return new StandardAnalyzer(Version.LUCENE_46);
 	}
 
-	protected IndexWriter getIndexWriter() {
-		return indexWriter;
-	}
-
-	protected void setIndexWriter(IndexWriter indexWriter) {
-		this.indexWriter = indexWriter;
-	}
-
-	public void index(List<RawSkillData> rawSkillDataObjects)
-			throws IndexingException {
+	public void index(List<RawSkillData> rawSkillDataObjects) throws IndexingException {
 		for (RawSkillData rawSkillData : rawSkillDataObjects) {
 			this.index(rawSkillData);
 		}
@@ -68,10 +79,19 @@ public class RawSkillDataIndexer {
 		Document doc = this.createDocument(rawSkillData);
 
 		try {
-			this.getIndexWriter().addDocument(doc);
+			this.getIndexWriterForUser(rawSkillData.getAuthor()).addDocument(doc);
 		} catch (IOException e) {
 			throw new IndexingException(e);
 		}
+	}
+
+	protected IndexWriter getIndexWriterForUser(String author) throws IOException {
+		IndexWriter indexWriter = this.indexWriterForUser.get(author);
+		if (indexWriter == null) {
+			indexWriter = this.createIndexWriterForUser(author);
+			this.indexWriterForUser.put(author, indexWriter);
+		}
+		return indexWriter;
 	}
 
 	private Document createDocument(RawSkillData rawSkillData) {
