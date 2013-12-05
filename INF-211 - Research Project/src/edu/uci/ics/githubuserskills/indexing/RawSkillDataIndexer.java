@@ -1,6 +1,7 @@
 package edu.uci.ics.githubuserskills.indexing;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -14,16 +15,17 @@ import org.apache.lucene.util.Version;
 
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
-public class RawSkillDataCollector {
+public class RawSkillDataIndexer {
 
 	private IndexWriter indexWriter;
 
-	public RawSkillDataCollector() {
+	public RawSkillDataIndexer() {
 	}
 
 	public void initialize() throws IndexingException {
 		try {
-			this.setIndexWriter(new IndexWriter(this.createDirectory(), this.createIndexWriterConfig()));
+			this.setIndexWriter(new IndexWriter(this.createDirectory(), this
+					.createIndexWriterConfig()));
 		} catch (IOException e) {
 			throw new IndexingException(e);
 		}
@@ -35,7 +37,8 @@ public class RawSkillDataCollector {
 	}
 
 	private IndexWriterConfig createIndexWriterConfig() {
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, this.createAnalyzer());
+		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46,
+				this.createAnalyzer());
 
 		config.setOpenMode(OpenMode.CREATE);
 
@@ -54,7 +57,14 @@ public class RawSkillDataCollector {
 		this.indexWriter = indexWriter;
 	}
 
-	public void index(RawSkillData rawSkillData) throws IndexingException {
+	public void index(List<RawSkillData> rawSkillDataObjects)
+			throws IndexingException {
+		for (RawSkillData rawSkillData : rawSkillDataObjects) {
+			this.index(rawSkillData);
+		}
+	}
+
+	protected void index(RawSkillData rawSkillData) throws IndexingException {
 		Document doc = this.createDocument(rawSkillData);
 
 		try {
