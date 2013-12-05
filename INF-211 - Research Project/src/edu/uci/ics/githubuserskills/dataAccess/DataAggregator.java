@@ -40,10 +40,10 @@ public class DataAggregator {
 				RawSkillData commitMessageData = new RawSkillData();
 				commitPatchData.setAuthor(login);
 				commitMessageData.setAuthor(login);
-				commitPatchData.setType(SkillDataType.COMMIT_PATCH.toString());
-				commitMessageData.setType(SkillDataType.COMMIT_MESSAGE.toString());
-				commitPatchData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00"));
-				commitMessageData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00"));
+				commitPatchData.setType(SkillDataType.COMMIT_PATCH);
+				commitMessageData.setType(SkillDataType.COMMIT_MESSAGE);
+				commitPatchData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00").getTime());
+				commitMessageData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00").getTime());
 
 				commitPatchData.setContents(commit.getPatch());
 				commitMessageData.setContents(commit.getCommit_message());
@@ -62,8 +62,8 @@ public class DataAggregator {
 				Comments comment = it.next();
 				RawSkillData authorComment = new RawSkillData();
 				authorComment.setAuthor(login);
-				authorComment.setType(SkillDataType.ISSUE_COMMENT.toString());
-				authorComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
+				authorComment.setType(SkillDataType.ISSUE_COMMENT);
+				authorComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00").getTime());
 				authorComment.setContents(comment.getComment());
 				rawDataList.add(authorComment);
 
@@ -80,8 +80,8 @@ public class DataAggregator {
 				Comments comment = it.next();
 				RawSkillData authorPullRequestComment = new RawSkillData();
 				authorPullRequestComment.setAuthor(login);
-				authorPullRequestComment.setType(SkillDataType.PULL_REQUEST_COMMENT.toString());
-				authorPullRequestComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
+				authorPullRequestComment.setType(SkillDataType.PULL_REQUEST_COMMENT);
+				authorPullRequestComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00").getTime());
 				authorPullRequestComment.setContents(comment.getComment());
 				rawDataList.add(authorPullRequestComment);
 
@@ -98,8 +98,8 @@ public class DataAggregator {
 				Comments comment = it.next();
 				RawSkillData authorCommitComment = new RawSkillData();
 				authorCommitComment.setAuthor(login);
-				authorCommitComment.setType(SkillDataType.COMMIT_COMMENT.toString());
-				authorCommitComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
+				authorCommitComment.setType(SkillDataType.COMMIT_COMMENT);
+				authorCommitComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00").getTime());
 				authorCommitComment.setContents(comment.getComment());
 				rawDataList.add(authorCommitComment);
 
