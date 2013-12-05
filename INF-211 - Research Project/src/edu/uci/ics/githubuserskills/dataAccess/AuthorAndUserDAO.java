@@ -1,9 +1,8 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.net.UnknownHostException;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -145,11 +144,12 @@ public class AuthorAndUserDAO {
 
 	}
 
-	public List<String> getAllLogins()
+	public BasicDBList getAllLogins() throws UnknownHostException
 	{
-		List<String> loginList = new ArrayList<String>();
 		//TODO: extract all logins
-		return loginList;
-
+		MongoDBHelper helper = new MongoDBHelper();
+		DBCollection table = getTable(helper);
+		BasicDBList list = (BasicDBList) table.distinct("login");
+		return list;
 	}
 }
