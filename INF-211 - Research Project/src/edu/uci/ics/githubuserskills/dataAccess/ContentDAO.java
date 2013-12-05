@@ -205,9 +205,39 @@ public class ContentDAO{
 	 */
 	public List<Comments> getCommitComments(String login) throws UnknownHostException
 	{
+		MongoDBHelper helper = new MongoDBHelper();
 
 		List<Comments> CommitCommentList = new ArrayList<Comments>();
-		//TODO: implement method
+		DBCollection commitCommentsTable = getTable(helper, "commit_comments");
+		AuthorAndUserDAO dao = new AuthorAndUserDAO();
+		DBObject authorDBObject = dao.getAuthorDBObject(login);
+		authorDBObject.put("site_admin",false);
+		Author author = dao.getAuthorbyLogin(login);
+		BasicDBObject commitSearchQuery = new BasicDBObject("user", authorDBObject);
+		DBCursor cursor = helper.findData(commitSearchQuery, commitCommentsTable, null);
+
+		while(cursor.hasNext())
+		{
+			Comments comment = new Comments();
+			comment.setType("Commit Comment");
+			DBObject obj = cursor.next();
+			//could directly set it to author. comparison not needed
+			if(obj.get("user")!=null)
+				comment.setAuthor(author);
+			else
+				continue;
+			if(obj.get("body")!=null)
+				comment.setComment(obj.get("body").toString());
+			else
+				comment.setComment(null);
+			if(obj.get("created_at")!=null)
+				comment.setTime(obj.get("created_at").toString());
+			else
+				comment.setTime(null);
+
+			CommitCommentList.add(comment);			
+		}
+
 		return CommitCommentList;
 	}
 }

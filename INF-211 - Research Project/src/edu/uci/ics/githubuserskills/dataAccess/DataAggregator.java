@@ -2,7 +2,6 @@ package edu.uci.ics.githubuserskills.dataAccess;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import com.mongodb.BasicDBList;
@@ -10,6 +9,7 @@ import com.mongodb.BasicDBList;
 import edu.uci.ics.githubuserskills.model.Comments;
 import edu.uci.ics.githubuserskills.model.Commit;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
+import edu.uci.ics.githubuserskills.model.SkillDataType;
 
 /**
  * @author shriti
@@ -40,8 +40,8 @@ public class DataAggregator {
 				RawSkillData commitMessageData = new RawSkillData();
 				commitPatchData.setAuthor(login);
 				commitMessageData.setAuthor(login);
-				commitPatchData.setType("patch");
-				commitMessageData.setType("message");
+				commitPatchData.setType(SkillDataType.COMMIT_PATCH.toString());
+				commitMessageData.setType(SkillDataType.COMMIT_MESSAGE.toString());
 				commitPatchData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00"));
 				commitMessageData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0,10) + " 00:00:00"));
 
@@ -62,7 +62,7 @@ public class DataAggregator {
 				Comments comment = it.next();
 				RawSkillData authorComment = new RawSkillData();
 				authorComment.setAuthor(login);
-				authorComment.setType("issue_comment");
+				authorComment.setType(SkillDataType.ISSUE_COMMENT.toString());
 				authorComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
 				authorComment.setContents(comment.getComment());
 				rawDataList.add(authorComment);
@@ -71,7 +71,7 @@ public class DataAggregator {
 		}
 
 		//get pull request comments
-		ArrayList<Comments> authorPullRequestComments =  (ArrayList<Comments>) contentDAO.getIssueComments(login);
+		ArrayList<Comments> authorPullRequestComments =  (ArrayList<Comments>) contentDAO.getPullRequestComments(login);
 		if(authorPullRequestComments.size()!=0)
 		{
 			Iterator<Comments> it = authorPullRequestComments.iterator();
@@ -80,7 +80,7 @@ public class DataAggregator {
 				Comments comment = it.next();
 				RawSkillData authorPullRequestComment = new RawSkillData();
 				authorPullRequestComment.setAuthor(login);
-				authorPullRequestComment.setType("issue_comment");
+				authorPullRequestComment.setType(SkillDataType.PULL_REQUEST_COMMENT.toString());
 				authorPullRequestComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
 				authorPullRequestComment.setContents(comment.getComment());
 				rawDataList.add(authorPullRequestComment);
@@ -89,7 +89,23 @@ public class DataAggregator {
 		}
 
 		//get commit comments
-		//TODO: implement/call method from ContentDAO
+		ArrayList<Comments> authorCommitComments =  (ArrayList<Comments>) contentDAO.getCommitComments(login);
+		if(authorCommitComments.size()!=0)
+		{
+			Iterator<Comments> it = authorCommitComments.iterator();
+			while(it.hasNext())
+			{
+				Comments comment = it.next();
+				RawSkillData authorCommitComment = new RawSkillData();
+				authorCommitComment.setAuthor(login);
+				authorCommitComment.setType(SkillDataType.COMMIT_COMMENT.toString());
+				authorCommitComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0,10) + " 00:00:00"));
+				authorCommitComment.setContents(comment.getComment());
+				rawDataList.add(authorCommitComment);
+
+			}
+		}
+		
 		return rawDataList;
 
 	}

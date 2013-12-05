@@ -2,7 +2,7 @@ package edu.uci.ics.githubuserskills.model;
 
 public enum SkillDataType {
 
-	COMMIT("Commit"), COMMIT_MESSAGE("Commit message"), PULL_REQUEST_MESSAGE("Pull Request message"), ISSUE_MESSAGE("Issue message");
+	COMMIT_PATCH("Commit patch"), COMMIT_MESSAGE("Commit message"), COMMIT_COMMENT("Commit comment"), PULL_REQUEST_COMMENT("Pull Request comment"), ISSUE_COMMENT("Issue comment");
 
 	private String name;
 
