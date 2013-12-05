@@ -3,7 +3,7 @@ package edu.uci.ics.githubuserskills;
 import java.net.UnknownHostException;
 
 import edu.uci.ics.githubuserskills.controller.LuceneRankingCreator;
-import edu.uci.ics.githubuserskills.controller.MongoDBToLuceneConverter;
+import edu.uci.ics.githubuserskills.controller.MongoDBToRawSkillDataIndexer;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
 import edu.uci.ics.githubuserskills.indexing.IndexingException;
@@ -15,7 +15,7 @@ public class Launcher {
 	}
 
 	public static void main(String[] args) {
-		MongoDBToLuceneConverter dataConverter = new MongoDBToLuceneConverter();
+		MongoDBToRawSkillDataIndexer dataConverter = new MongoDBToRawSkillDataIndexer();
 		
 		LuceneRankingCreator rankingCreator = new LuceneRankingCreator();
 
