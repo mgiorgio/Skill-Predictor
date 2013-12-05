@@ -1,6 +1,8 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -8,6 +10,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+
+import edu.uci.ics.githubuserskills.model.Author;
+import edu.uci.ics.githubuserskills.model.User;
+
 
 
 /**
@@ -19,7 +25,7 @@ import com.mongodb.MongoClient;
 public class AuthorAndUserDAO {
 	public static final String tableName = "users";
 	public static final String databaseName = "msr14";
-	
+
 	/**
 	 * @param helper
 	 * @return DBCollection table
@@ -27,12 +33,12 @@ public class AuthorAndUserDAO {
 	 */
 	public DBCollection getTable(MongoDBHelper helper) throws UnknownHostException
 	{
-		 
+
 		MongoClient DbClient = helper.getConnection("localhost", 27017);
 		DB database = helper.getDatabase(databaseName, DbClient);
 		DBCollection table = helper.getTable(tableName, database);
 		return table;
-		
+
 	}
 	/**
 	 * @param obj, author
@@ -78,9 +84,9 @@ public class AuthorAndUserDAO {
 			// TODO log a warning message that more than one entry found for a unique login
 		}
 		//return the first entry as the author
-			DBObject obj= cursor.next();
-			setCommonAttributes(obj, author);
-			return author;
+		DBObject obj= cursor.next();
+		setCommonAttributes(obj, author);
+		return author;
 
 	}
 	/**
@@ -100,23 +106,50 @@ public class AuthorAndUserDAO {
 			// TODO log a warning message that more than one entry found for a unique login
 		}
 		//return the first entry as the author
-			DBObject obj= cursor.next();
-			setCommonAttributes(obj, user);
-			//TODO: Deal with null values. If obj.get(attrib) returns a null, it needs to be checked.
-			user.setName(obj.get("name").toString());
-			user.setCompany(obj.get("company").toString());
-			user.setBlog(obj.get("blog").toString());
-			user.setLocation(obj.get("location").toString());
-			user.setEmail(obj.get("email").toString());
-			user.setHireable(obj.get("hireable").toString());
-			user.setBio(obj.get("bio").toString());
-			user.setPublic_repos(Integer.parseInt(obj.get("public_repos").toString()));
-			user.setFollowers(Integer.parseInt(obj.get("followers").toString()));
-			user.setFollowing(Integer.parseInt(obj.get("following").toString()));
-			user.setCreated_at(obj.get("created_at").toString());
-			user.setUpdated_at(obj.get("updated_at").toString());
-			user.setPublic_gists(Integer.parseInt(obj.get("public_gists").toString()));
-			
-			return user;
+		DBObject obj= cursor.next();
+		setCommonAttributes(obj, user);
+		//TODO: Deal with null values. If obj.get(attrib) returns a null, it needs to be checked.
+		user.setName(obj.get("name").toString());
+		user.setCompany(obj.get("company").toString());
+		user.setBlog(obj.get("blog").toString());
+		user.setLocation(obj.get("location").toString());
+		user.setEmail(obj.get("email").toString());
+		user.setHireable(obj.get("hireable").toString());
+		user.setBio(obj.get("bio").toString());
+		user.setPublic_repos(Integer.parseInt(obj.get("public_repos").toString()));
+		user.setFollowers(Integer.parseInt(obj.get("followers").toString()));
+		user.setFollowing(Integer.parseInt(obj.get("following").toString()));
+		user.setCreated_at(obj.get("created_at").toString());
+		user.setUpdated_at(obj.get("updated_at").toString());
+		user.setPublic_gists(Integer.parseInt(obj.get("public_gists").toString()));
+
+		return user;
+	}
+
+	public DBObject getAuthorDBObject(String login) throws UnknownHostException{
+
+		MongoDBHelper helper = new MongoDBHelper();
+		BasicDBObject searchQuery = new BasicDBObject("login", login);
+		BasicDBObject excludeFields = new BasicDBObject("_id", 0).append("name", 0).append("company", 0).append("blog", 0).append("location", 0).append("email", 0)
+				.append("hireable", 0).append("bio", 0).append("public_repos", 0).append("followers", 0).append("following", 0)
+				.append("created_at", 0).append("updated_at", 0).append("public_gists", 0);
+		DBCollection table = getTable(helper);
+		DBCursor cursor = helper.findData(searchQuery, table, excludeFields);
+		if(cursor.size()>1)
+		{
+			// TODO log a warning message that more than one entry found for a unique login
+		}
+		//return the first entry as the author
+		DBObject obj= cursor.next();
+		return obj;
+
+	}
+
+	public List<String> getAllLogins()
+	{
+		List<String> loginList = new ArrayList<String>();
+		//TODO: extract all logins
+		return loginList;
+
 	}
 }

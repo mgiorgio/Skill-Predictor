@@ -2,6 +2,7 @@ package edu.uci.ics.githubuserskills.model;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.Timestamp;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class RawSkillData {
 	/**
 	 * When was this piece of information created.
 	 */
-	private long timestamp;
+	private Timestamp timestamp;
 
 	/**
 	 * What kind of information is this.
@@ -61,11 +62,11 @@ public class RawSkillData {
 		this.author = author;
 	}
 
-	public long getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 
