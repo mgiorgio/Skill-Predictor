@@ -1,6 +1,5 @@
 package edu.uci.ics.githubuserskills.indexing;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -9,58 +8,70 @@ import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.LongField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import edu.uci.ics.githubuserskills.lucene.LuceneDirectoryFactory;
+import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
+import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
 public class RawSkillDataIndexer {
 
-	private String uniqueExecutionToken;
-
 	private Map<String, IndexWriter> indexWriterForUser;
+	private Map<String, Directory> openDirectories;
+
+	private LuceneDirectoryFactory directoryFactory;
+
+	private boolean append;
 
 	public RawSkillDataIndexer() {
+		this(false);
+	}
+
+	public RawSkillDataIndexer(boolean append) {
+		this.setDirectoryFactory(new LuceneFSDirectoryFactory());
 		this.indexWriterForUser = new HashMap<String, IndexWriter>();
+		this.openDirectories = new HashMap<String, Directory>();
+		this.append = append;
+	}
+
+	private LuceneDirectoryFactory getDirectoryFactory() {
+		return directoryFactory;
+	}
+
+	public void setDirectoryFactory(LuceneDirectoryFactory directoryFactory) {
+		this.directoryFactory = directoryFactory;
 	}
 
 	public void initialize() {
-		this.initializeUniqueExecutionToken();
-	}
-
-	private void initializeUniqueExecutionToken() {
-		this.setUniqueExecutionToken(String.valueOf(System.currentTimeMillis()));
 	}
 
 	protected IndexWriter createIndexWriterForUser(String user) throws IOException {
-		Directory createDirectoryForUser = this.createDirectoryForUser(user);
-		return new IndexWriter(createDirectoryForUser, this.createIndexWriterConfig());
+		Directory directory = this.openDirectoryForUser(user);
+		openDirectories.put(user, directory);
+		return new IndexWriter(directory, this.createIndexWriterConfig());
 	}
 
-	protected Directory createDirectoryForUser(String user) throws IOException {
-		return FSDirectory.open(this.getFileDirectoryForUser(user));
-	}
-
-	private File getFileDirectoryForUser(String user) {
-		return new File("data" + File.separator + this.getUniqueExecutionToken() + File.separator + user);
-	}
-
-	private String getUniqueExecutionToken() {
-		return uniqueExecutionToken;
-	}
-
-	private void setUniqueExecutionToken(String uniqueExecutionToken) {
-		this.uniqueExecutionToken = uniqueExecutionToken;
+	private Directory openDirectoryForUser(String user) throws IOException {
+		return this.getDirectoryFactory().openDirectory(user);
 	}
 
 	private IndexWriterConfig createIndexWriterConfig() {
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_46, this.createAnalyzer());
 
-		config.setOpenMode(OpenMode.CREATE);
+		if (this.append) {
+			config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		} else {
+			config.setOpenMode(OpenMode.CREATE);
+		}
 
 		return config;
 	}
@@ -97,7 +108,21 @@ public class RawSkillDataIndexer {
 	private Document createDocument(RawSkillData rawSkillData) {
 		Document doc = new Document();
 
+		doc.add(new StringField(LuceneUtils.Globals.AUTHOR_FIELD, rawSkillData.getAuthor(), Store.YES));
+		doc.add(new StringField(LuceneUtils.Globals.TYPE_FIELD, rawSkillData.getType().getName(), Store.NO));
+		doc.add(new LongField(LuceneUtils.Globals.TIME_FIELD, rawSkillData.getTimestamp(), Store.YES));
+		doc.add(new TextField(LuceneUtils.Globals.CONTENTS_FIELD, rawSkillData.getContents()));
+
 		return doc;
 	}
 
+	public void close() throws IndexingException {
+		try {
+			for (Directory dir : this.openDirectories.values()) {
+				dir.close();
+			}
+		} catch (IOException e) {
+			throw new IndexingException(e);
+		}
+	}
 }

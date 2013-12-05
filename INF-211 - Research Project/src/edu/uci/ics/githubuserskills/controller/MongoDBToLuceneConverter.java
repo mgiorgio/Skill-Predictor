@@ -17,9 +17,11 @@ public class MongoDBToLuceneConverter {
 
 	public void initialize() {
 		this.setIndexer(this.createIndexer());
+		this.getIndexer().initialize();
 	}
 
 	private RawSkillDataIndexer createIndexer() {
+		boolean append = Boolean.TRUE.toString().equals(System.getProperty("append"));
 		return new RawSkillDataIndexer();
 	}
 
@@ -29,12 +31,13 @@ public class MongoDBToLuceneConverter {
 
 		for (String login : logins) {
 			// Collect the RawSkillData objects associated to each login.
-			List<RawSkillData> rawDataForLogin = this
-					.retrieveSkillDataForLogin(login);
+			List<RawSkillData> rawDataForLogin = this.retrieveSkillDataForLogin(login);
 
 			// Index the obtained objects.
 			this.getIndexer().index(rawDataForLogin);
 		}
+
+		this.getIndexer().close();
 
 	}
 
