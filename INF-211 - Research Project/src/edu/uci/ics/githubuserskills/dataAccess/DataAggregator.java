@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.mongodb.BasicDBList;
+
 import edu.uci.ics.githubuserskills.model.Comments;
 import edu.uci.ics.githubuserskills.model.Commit;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
@@ -97,19 +99,19 @@ public class DataAggregator {
 	 * @return HashMap<String, ArrayList<RawSkillData>>
 	 * @throws UnknownHostException
 	 */
-	public HashMap<String, ArrayList<RawSkillData>> getDataMap() throws UnknownHostException
+	public ArrayList<RawSkillData> getAllLogins() throws UnknownHostException
 	{
-		HashMap<String, ArrayList<RawSkillData>> dataMap = new HashMap<String, ArrayList<RawSkillData>>();
+		ArrayList<RawSkillData> rawDataList = new ArrayList<RawSkillData>();
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		ArrayList<String> logins = (ArrayList<String>) dao.getAllLogins();
-		Iterator<String> it = logins.iterator();
+		BasicDBList logins = dao.getAllLogins();
+		Iterator<Object> it = logins.iterator();
 		while(it.hasNext())
 		{
-			String s = it.next();
-			dataMap.put(s, getAuthorData(s));
+			Object s = it.next();
+			rawDataList.addAll(getAuthorData(s.toString()));
 		}
 
-		return dataMap;
+		return rawDataList;
 	}
 }
 
