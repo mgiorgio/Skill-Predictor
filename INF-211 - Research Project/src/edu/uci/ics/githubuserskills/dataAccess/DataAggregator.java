@@ -6,10 +6,10 @@ import java.util.Iterator;
 
 import com.mongodb.BasicDBList;
 
-import edu.uci.ics.githubuserskills.model.Comments;
-import edu.uci.ics.githubuserskills.model.Commit;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 import edu.uci.ics.githubuserskills.model.SkillDataType;
+import edu.uci.ics.githubuserskills.model.db.Comments;
+import edu.uci.ics.githubuserskills.model.db.Commit;
 
 /**
  * @author shriti

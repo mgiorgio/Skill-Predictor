@@ -11,9 +11,9 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import edu.uci.ics.githubuserskills.model.Author;
-import edu.uci.ics.githubuserskills.model.Comments;
-import edu.uci.ics.githubuserskills.model.Commit;
+import edu.uci.ics.githubuserskills.model.db.Author;
+import edu.uci.ics.githubuserskills.model.db.Comments;
+import edu.uci.ics.githubuserskills.model.db.Commit;
 
 
 

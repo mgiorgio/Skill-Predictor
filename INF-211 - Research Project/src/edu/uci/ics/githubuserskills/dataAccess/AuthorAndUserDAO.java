@@ -2,6 +2,7 @@ package edu.uci.ics.githubuserskills.dataAccess;
 
 
 import java.net.UnknownHostException;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -10,8 +11,8 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import edu.uci.ics.githubuserskills.model.Author;
-import edu.uci.ics.githubuserskills.model.User;
+import edu.uci.ics.githubuserskills.model.db.Author;
+import edu.uci.ics.githubuserskills.model.db.User;
 
 
 

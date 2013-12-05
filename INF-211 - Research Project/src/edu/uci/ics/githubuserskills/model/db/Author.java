@@ -1,4 +1,4 @@
-package edu.uci.ics.githubuserskills.model;
+package edu.uci.ics.githubuserskills.model.db;
 
 import java.util.LinkedList;
 import java.util.List;

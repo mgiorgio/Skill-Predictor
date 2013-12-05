@@ -1,4 +1,5 @@
-package edu.uci.ics.githubuserskills.model;
+package edu.uci.ics.githubuserskills.model.db;
+
 
 /**
  * @author shriti
