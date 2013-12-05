@@ -1,5 +1,7 @@
 package edu.uci.ics.githubuserskills;
 
+import java.net.UnknownHostException;
+
 import edu.uci.ics.githubuserskills.controller.LuceneRankingCreator;
 import edu.uci.ics.githubuserskills.controller.MongoDBToLuceneConverter;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
@@ -30,6 +32,9 @@ public class Launcher {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UserRankingCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

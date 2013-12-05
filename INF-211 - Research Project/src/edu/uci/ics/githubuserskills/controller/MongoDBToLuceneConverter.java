@@ -78,9 +78,9 @@ public class MongoDBToLuceneConverter {
 	private List<String> retrieveLogins() throws UnknownHostException {
 		// TODO Auto-generated method stub
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		BasicDBList list = dao.getAllLogins();
+		List<String> list = dao.getLoginList();
 		//TODO: convert BasicDBList to java List.
-		return(null);
+		return(list);
 	}
 
 }

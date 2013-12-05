@@ -2,6 +2,9 @@ package edu.uci.ics.githubuserskills.dataAccess;
 
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -152,5 +155,18 @@ public class AuthorAndUserDAO {
 		DBCollection table = getTable(helper);
 		BasicDBList list = (BasicDBList) table.distinct("login");
 		return list;
+	}
+	
+	public List<String> getLoginList() throws UnknownHostException
+	{
+		List<String> loginList = new ArrayList<String>();
+		BasicDBList list = getAllLogins();
+		Iterator it = list.iterator();
+		while(it.hasNext())
+		{
+			Object obj = it.next();
+			loginList.add(obj.toString());	
+		}
+		return(loginList);
 	}
 }
