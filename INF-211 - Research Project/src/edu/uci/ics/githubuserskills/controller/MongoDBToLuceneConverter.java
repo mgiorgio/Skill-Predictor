@@ -1,8 +1,14 @@
 package edu.uci.ics.githubuserskills.controller;
 
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.mongodb.BasicDBList;
+
+import edu.uci.ics.githubuserskills.dataAccess.AuthorAndUserDAO;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
+import edu.uci.ics.githubuserskills.dataAccess.DataAggregator;
 import edu.uci.ics.githubuserskills.indexing.IndexingException;
 import edu.uci.ics.githubuserskills.indexing.RawSkillDataIndexer;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
@@ -25,7 +31,7 @@ public class MongoDBToLuceneConverter {
 		return new RawSkillDataIndexer();
 	}
 
-	public void convert() throws DataAccessException, IndexingException {
+	public void convert() throws DataAccessException, IndexingException, UnknownHostException {
 		// Get all the logins.
 		List<String> logins = this.retrieveLogins();
 
@@ -55,20 +61,26 @@ public class MongoDBToLuceneConverter {
 	 * 
 	 * @param login
 	 * @return The list of contributions.
+	 * @throws UnknownHostException 
 	 */
-	private List<RawSkillData> retrieveSkillDataForLogin(String login) {
+	private List<RawSkillData> retrieveSkillDataForLogin(String login) throws UnknownHostException {
 		// TODO Auto-generated method stub
-		return null;
+		DataAggregator dataAgg = new DataAggregator();
+		return(dataAgg.getAuthorData(login));
 	}
 
 	/**
 	 * Obtains a {@link List} of logins from MongoDB.
 	 * 
 	 * @return A {@link List} of Strings representing the logins.
+	 * @throws UnknownHostException 
 	 */
-	private List<String> retrieveLogins() {
+	private List<String> retrieveLogins() throws UnknownHostException {
 		// TODO Auto-generated method stub
-		return null;
+		AuthorAndUserDAO dao = new AuthorAndUserDAO();
+		BasicDBList list = dao.getAllLogins();
+		//TODO: convert BasicDBList to java List.
+		return(null);
 	}
 
 }
