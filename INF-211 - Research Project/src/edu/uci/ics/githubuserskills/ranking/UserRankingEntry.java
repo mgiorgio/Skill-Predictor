@@ -1,16 +1,16 @@
 package edu.uci.ics.githubuserskills.ranking;
 
-public class TermFrequencyPair {
+public class UserRankingEntry {
 
 	private String term;
 
 	private long frequency;
 
-	public TermFrequencyPair() {
+	public UserRankingEntry() {
 		this(null, 0L);
 	}
 
-	public TermFrequencyPair(String term, long frequency) {
+	public UserRankingEntry(String term, long frequency) {
 		this.setFrequency(frequency);
 		this.setTerm(term);
 	}

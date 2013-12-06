@@ -37,7 +37,7 @@ public class UserRankingBuilder {
 		UserRanking ranking = new UserRanking();
 
 		for (Entry<String, Long> freq : this.freqs.entrySet()) {
-			ranking.addEntry(new TermFrequencyPair(freq.getKey(), freq.getValue()));
+			ranking.addEntry(new UserRankingEntry(freq.getKey(), freq.getValue()));
 		}
 
 		this.reset();
