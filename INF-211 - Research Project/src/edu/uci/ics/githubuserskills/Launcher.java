@@ -6,6 +6,7 @@ import edu.uci.ics.githubuserskills.controller.LuceneRankingCreator;
 import edu.uci.ics.githubuserskills.controller.MongoDBToRawSkillDataIndexer;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
+import edu.uci.ics.githubuserskills.indexing.DirectIndexer;
 import edu.uci.ics.githubuserskills.indexing.IndexingException;
 
 public class Launcher {
@@ -15,15 +16,15 @@ public class Launcher {
 	}
 
 	public static void main(String[] args) {
-		MongoDBToRawSkillDataIndexer dataConverter = new MongoDBToRawSkillDataIndexer();
-		
+		MongoDBToRawSkillDataIndexer dataConverter = new MongoDBToRawSkillDataIndexer(new DirectIndexer());
+
 		LuceneRankingCreator rankingCreator = new LuceneRankingCreator();
 
 		dataConverter.initialize();
 
 		try {
 			dataConverter.convert();
-			
+
 			rankingCreator.rankings();
 		} catch (DataAccessException e) {
 			// TODO Auto-generated catch block
