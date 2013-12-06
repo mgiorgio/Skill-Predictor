@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.uci.ics.githubuserskills.indexing;
+package edu.uci.ics.githubuserskills.ranking;
 
 /**
  * @author mgiorgio

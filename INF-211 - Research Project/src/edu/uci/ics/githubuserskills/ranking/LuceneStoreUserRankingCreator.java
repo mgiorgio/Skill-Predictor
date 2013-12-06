@@ -1,4 +1,4 @@
-package edu.uci.ics.githubuserskills.indexing;
+package edu.uci.ics.githubuserskills.ranking;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,12 +19,14 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 
+import edu.uci.ics.githubuserskills.controller.LuceneRankingCreator;
+import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.lucene.LuceneDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
-public class LuceneRawSkillDataIndexer implements RawSkillDataIndexer {
+public class LuceneStoreUserRankingCreator implements UserRankingCreator {
 
 	private Map<String, IndexWriter> indexWriterForUser;
 	private Map<String, Directory> openDirectories;
@@ -35,11 +37,13 @@ public class LuceneRawSkillDataIndexer implements RawSkillDataIndexer {
 
 	private Set<String> fixedDictionary;
 
-	public LuceneRawSkillDataIndexer() {
+	private LuceneRankingCreator luceneRankingCreator;
+
+	public LuceneStoreUserRankingCreator() {
 		this(false);
 	}
 
-	public LuceneRawSkillDataIndexer(boolean append) {
+	public LuceneStoreUserRankingCreator(boolean append) {
 		this.setDirectoryFactory(new LuceneFSDirectoryFactory());
 		this.indexWriterForUser = new HashMap<String, IndexWriter>();
 		this.openDirectories = new HashMap<String, Directory>();
@@ -63,6 +67,8 @@ public class LuceneRawSkillDataIndexer implements RawSkillDataIndexer {
 	}
 
 	public void initialize() {
+		this.luceneRankingCreator = new LuceneRankingCreator();
+		this.luceneRankingCreator.setDirectoryFactory(getDirectoryFactory());
 	}
 
 	protected IndexWriter createIndexWriterForUser(String user) throws IOException {
@@ -96,10 +102,15 @@ public class LuceneRawSkillDataIndexer implements RawSkillDataIndexer {
 	}
 
 	@Override
-	public void index(List<RawSkillData> rawSkillDataObjects) throws IndexingException {
+	public UserRanking rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException {
 		for (RawSkillData rawSkillData : rawSkillDataObjects) {
-			this.index(rawSkillData);
+			try {
+				this.index(rawSkillData);
+			} catch (IndexingException e) {
+				throw new UserRankingCreationException(e);
+			}
 		}
+		return this.luceneRankingCreator.ranking(author);
 	}
 
 	protected void index(RawSkillData rawSkillData) throws IndexingException {
@@ -132,13 +143,13 @@ public class LuceneRawSkillDataIndexer implements RawSkillDataIndexer {
 		return doc;
 	}
 
-	public void close() throws IndexingException {
+	public void close() throws UserRankingCreationException {
 		try {
 			for (Directory dir : this.openDirectories.values()) {
 				dir.close();
 			}
 		} catch (IOException e) {
-			throw new IndexingException(e);
+			throw new UserRankingCreationException(e);
 		}
 	}
 }

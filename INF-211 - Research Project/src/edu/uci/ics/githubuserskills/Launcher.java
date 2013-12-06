@@ -2,12 +2,11 @@ package edu.uci.ics.githubuserskills;
 
 import java.net.UnknownHostException;
 
-import edu.uci.ics.githubuserskills.controller.LuceneRankingCreator;
-import edu.uci.ics.githubuserskills.controller.MongoDBToRawSkillDataIndexer;
+import edu.uci.ics.githubuserskills.controller.MongoDBDataRetriever;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
-import edu.uci.ics.githubuserskills.indexing.DirectIndexer;
-import edu.uci.ics.githubuserskills.indexing.IndexingException;
+import edu.uci.ics.githubuserskills.ranking.DirectLuceneBasedUserRankingCreator;
+import edu.uci.ics.githubuserskills.ranking.UserRankingCreator;
 
 public class Launcher {
 
@@ -16,26 +15,21 @@ public class Launcher {
 	}
 
 	public static void main(String[] args) {
-		MongoDBToRawSkillDataIndexer dataConverter = new MongoDBToRawSkillDataIndexer(new DirectIndexer());
+		UserRankingCreator rankingCreator = new DirectLuceneBasedUserRankingCreator();
 
-		LuceneRankingCreator rankingCreator = new LuceneRankingCreator();
+		MongoDBDataRetriever dataRetriever = new MongoDBDataRetriever(rankingCreator);
 
-		dataConverter.initialize();
+		dataRetriever.initialize();
 
 		try {
-			dataConverter.convert();
-
-			rankingCreator.rankings();
+			dataRetriever.start();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (DataAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IndexingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (UserRankingCreationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -9,7 +9,6 @@ import org.apache.lucene.store.FSDirectory;
 public class LuceneFSDirectoryFactory implements LuceneDirectoryFactory {
 
 	public LuceneFSDirectoryFactory() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

@@ -9,6 +9,8 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.Test;
 
+import edu.uci.ics.githubuserskills.ranking.DictionaryBasedAnalyzer;
+
 public class DirectTokenizationTest {
 
 	public DirectTokenizationTest() {
