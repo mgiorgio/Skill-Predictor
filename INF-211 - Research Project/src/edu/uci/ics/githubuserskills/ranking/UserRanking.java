@@ -15,13 +15,13 @@ public class UserRanking {
 
 	private String author;
 
-	private List<TermFrequencyPair> terms;
+	private List<UserRankingEntry> terms;
 
 	public UserRanking() {
-		this.terms = new LinkedList<TermFrequencyPair>();
+		this.terms = new LinkedList<UserRankingEntry>();
 	}
 
-	public void addEntry(TermFrequencyPair frequencyPair) {
+	public void addEntry(UserRankingEntry frequencyPair) {
 		this.terms.add(frequencyPair);
 	}
 
@@ -33,17 +33,17 @@ public class UserRanking {
 		this.author = author;
 	}
 
-	public List<TermFrequencyPair> getTerms() {
-		return new ArrayList<TermFrequencyPair>(this.terms);
+	public List<UserRankingEntry> getTerms() {
+		return new ArrayList<UserRankingEntry>(this.terms);
 	}
 
-	public void setTerms(List<TermFrequencyPair> terms) {
+	public void setTerms(List<UserRankingEntry> terms) {
 		this.terms = terms;
 	}
 
 	public void exportTextFile() throws IOException {
 		FileWriter writer = new FileWriter(LuceneUtils.getFileDirectoryForUser(this.author) + File.separator + EXPORT_TXT);
-		for (TermFrequencyPair termFreq : this.terms) {
+		for (UserRankingEntry termFreq : this.terms) {
 			writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
 		}
 		writer.close();

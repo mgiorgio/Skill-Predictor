@@ -18,7 +18,7 @@ import org.apache.lucene.util.BytesRef;
 import edu.uci.ics.githubuserskills.lucene.LuceneDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
-import edu.uci.ics.githubuserskills.ranking.TermFrequencyPair;
+import edu.uci.ics.githubuserskills.ranking.UserRankingEntry;
 import edu.uci.ics.githubuserskills.ranking.UserRanking;
 
 public class LuceneRankingCreator {
@@ -103,7 +103,7 @@ public class LuceneRankingCreator {
 	private UserRanking createUserRanking(Map<String, Long> freqMap) {
 		UserRanking ranking = new UserRanking();
 		for (Entry<String, Long> termFreq : freqMap.entrySet()) {
-			TermFrequencyPair pair = new TermFrequencyPair(termFreq.getKey(), termFreq.getValue());
+			UserRankingEntry pair = new UserRankingEntry(termFreq.getKey(), termFreq.getValue());
 			ranking.addEntry(pair);
 		}
 
