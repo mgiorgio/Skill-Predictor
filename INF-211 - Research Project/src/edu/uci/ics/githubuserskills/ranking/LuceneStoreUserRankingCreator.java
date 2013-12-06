@@ -26,6 +26,12 @@ import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
+/**
+ * @author Matias
+ * 
+ * @deprecated Replaced by {@link DirectLuceneBasedUserRankingCreator}.
+ */
+@Deprecated
 public class LuceneStoreUserRankingCreator implements UserRankingCreator {
 
 	private Map<String, IndexWriter> indexWriterForUser;
