@@ -33,14 +33,10 @@ public class MongoDBHelper {
 	}
 
 	public DBCursor findData(BasicDBObject searchQuery, DBCollection table, BasicDBObject fields) {
-		// if(fields == null)
-		// return(table.find(searchQuery));
-		// else
-		// return(table.find(searchQuery, fields));
 		if (fields == null)
-			return (table.find(searchQuery).limit(100));
+			return (table.find(searchQuery));
 		else
-			return (table.find(searchQuery, fields).limit(100));
+			return (table.find(searchQuery, fields));
 
 	}
 }

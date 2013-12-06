@@ -21,7 +21,7 @@ import edu.uci.ics.githubuserskills.model.SkillDataType;
 @RunWith(MockitoJUnitRunner.class)
 public class RawSkillDataIndexerJUnitTC {
 
-	private RawSkillDataIndexer indexer = spy(new RawSkillDataIndexer());
+	private LuceneRawSkillDataIndexer indexer = spy(new LuceneRawSkillDataIndexer());
 
 	public RawSkillDataIndexerJUnitTC() {
 	}
@@ -74,6 +74,9 @@ public class RawSkillDataIndexerJUnitTC {
 	private RawSkillData createTestRawDataForUser(String user) {
 		RawSkillData data1 = new RawSkillData();
 		data1.setAuthor(user);
+		data1.setContents("test contents");
+		data1.setTimestamp(System.currentTimeMillis());
+		data1.setType(SkillDataType.COMMIT_COMMENT);
 		return data1;
 	}
 

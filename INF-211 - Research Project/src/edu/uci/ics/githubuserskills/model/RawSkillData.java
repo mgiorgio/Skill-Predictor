@@ -1,8 +1,5 @@
 package edu.uci.ics.githubuserskills.model;
 
-import java.io.Reader;
-import java.io.StringReader;
-
 /**
  * <p>
  * Instances of this class will contain raw data produced by a person. The data
@@ -41,16 +38,9 @@ public class RawSkillData {
 	 */
 	private SkillDataType type;
 
-	/**
-	 * A {@link Reader} instance to get the actual technical text.
-	 */
-	private Reader contents;
+	private String contents;
 
 	public RawSkillData() {
-	}
-
-	public void setContents(String contents) {
-		this.setContents(new StringReader(contents));
 	}
 
 	public String getAuthor() {
@@ -77,11 +67,11 @@ public class RawSkillData {
 		this.type = type;
 	}
 
-	public Reader getContents() {
+	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(Reader contents) {
+	public void setContents(String contents) {
 		this.contents = contents;
 	}
 
