@@ -1,9 +1,0 @@
-java
-object
-lucene
-windows
-linux
-jmx
-jms
-connection
-network
