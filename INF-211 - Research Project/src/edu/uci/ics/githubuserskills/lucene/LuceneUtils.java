@@ -13,7 +13,7 @@ public class LuceneUtils {
 
 	private static final String FIXED_DICTIONARY_PATH = "fixeddictionary.txt";
 
-	private static final String USERDATA = "userdata";
+	public static final String USERDATA = "userdata";
 
 	public static final String DATA = "data";
 
@@ -25,15 +25,15 @@ public class LuceneUtils {
 	}
 
 	public static String getFileDirectoryForUser(String user) {
-		return getLuceneDirectory() + File.separator + user;
+		return getExecutionDirectory() + File.separator + user;
 	}
 
-	public static String getLuceneDirectory() {
+	public static String getExecutionDirectory() {
 		return USERDATA + File.separator + LuceneUtils.EXECUTION_TOKEN;
 	}
 
 	public static String getFixedDictionaryPath() {
-		return USERDATA + File.separator + FIXED_DICTIONARY_PATH;
+		return DATA + File.separator + FIXED_DICTIONARY_PATH;
 	}
 
 	public static Set<String> loadFixedDictionary() throws IOException {

@@ -49,7 +49,7 @@ public class LuceneRankingCreator {
 	}
 
 	private List<String> getAuthors() {
-		File[] subDirectories = new File(LuceneUtils.getLuceneDirectory()).listFiles(new FileFilter() {
+		File[] subDirectories = new File(LuceneUtils.getExecutionDirectory()).listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File pathname) {

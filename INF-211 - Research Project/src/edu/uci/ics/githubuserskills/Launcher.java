@@ -10,6 +10,7 @@ import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
 import edu.uci.ics.githubuserskills.ranking.DirectLuceneBasedUserRankingCreator;
 import edu.uci.ics.githubuserskills.ranking.UserRankingCreator;
+import edu.uci.ics.githubuserskills.ranking.UserRankingExporter;
 
 public class Launcher {
 
@@ -20,13 +21,13 @@ public class Launcher {
 
 	public static void main(String[] args) {
 		console.info("Launching Github Profiler...");
-		UserRankingCreator rankingCreator = new DirectLuceneBasedUserRankingCreator();
+		UserRankingCreator rankingCreator = new UserRankingExporter(new DirectLuceneBasedUserRankingCreator());
 
 		MongoDBDataRetriever dataRetriever = new MongoDBDataRetriever(rankingCreator);
 
-		dataRetriever.initialize();
-
 		try {
+			dataRetriever.initialize();
+
 			if (isSingleAuthor(args)) {
 				String author = authorInArguments(args);
 				console.info("Profiling author {}", author);

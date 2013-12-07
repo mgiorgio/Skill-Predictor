@@ -24,7 +24,7 @@ public class MongoDBDataRetriever {
 		this.setUserRankingCreator(indexer);
 	}
 
-	public void initialize() {
+	public void initialize() throws UserRankingCreationException {
 		this.getUserRankingCreator().initialize();
 	}
 

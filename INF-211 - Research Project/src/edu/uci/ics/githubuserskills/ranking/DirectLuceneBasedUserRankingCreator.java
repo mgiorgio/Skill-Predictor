@@ -6,14 +6,24 @@ import java.util.Set;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
+/**
+ * @author Matias
+ * 
+ */
 public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 
+	private static final Logger log = LoggerFactory.getLogger(DirectLuceneBasedUserRankingCreator.class);
+
 	private UserRankingBuilder freqsHolder;
+
+	private DictionaryBasedAnalyzer analyzer;
 
 	public DirectLuceneBasedUserRankingCreator() {
 	}
@@ -21,21 +31,11 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 	@Override
 	public UserRanking rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException {
 		UserRankingBuilder userRankingBuilder = new UserRankingBuilder();
-		DictionaryBasedAnalyzer analyzer;
-		Set<String> fixedDictionary;
+		userRankingBuilder.setAuthor(author);
 
 		try {
-			fixedDictionary = LuceneUtils.loadFixedDictionary();
-		} catch (IOException e1) {
-			throw new UserRankingCreationException(e1);
-		}
+			for (RawSkillData rawSkillData : rawSkillDataObjects) {
 
-		analyzer = new DictionaryBasedAnalyzer(fixedDictionary);
-		analyzer.setDictionary(fixedDictionary);
-
-		for (RawSkillData rawSkillData : rawSkillDataObjects) {
-
-			try {
 				final String input = rawSkillData.getContents();
 
 				TokenStream ts;
@@ -56,12 +56,9 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 					ts.close(); // Release resources associated with this
 								// stream.
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				analyzer.close();
 			}
+		} catch (IOException e) {
+			throw new UserRankingCreationException(e);
 		}
 
 		return userRankingBuilder.build();
@@ -72,14 +69,21 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 	}
 
 	@Override
-	public void initialize() {
-		// TODO Auto-generated method stub
+	public void initialize() throws UserRankingCreationException {
+		log.info("Initializing Dictionary Based Analyzer...");
+		try {
+			Set<String> fixedDictionary = LuceneUtils.loadFixedDictionary();
+			analyzer = new DictionaryBasedAnalyzer(fixedDictionary);
+			analyzer.setDictionary(fixedDictionary);
+			log.info("Dictionary Based Analyzer initialized successfully.");
+		} catch (IOException e1) {
+			throw new UserRankingCreationException(e1);
+		}
 
 	}
 
 	@Override
 	public void close() throws UserRankingCreationException {
-		// TODO Auto-generated method stub
-
+		analyzer.close();
 	}
 }

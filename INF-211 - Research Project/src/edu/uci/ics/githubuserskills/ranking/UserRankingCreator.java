@@ -9,7 +9,7 @@ public interface UserRankingCreator {
 
 	public UserRanking rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException;
 
-	public void initialize();
+	public void initialize() throws UserRankingCreationException;
 
 	public void close() throws UserRankingCreationException;
 }

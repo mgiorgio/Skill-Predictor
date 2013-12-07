@@ -7,11 +7,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 
+/**
+ * @author Matias
+ * 
+ */
 public class UserRanking {
 
 	private static final String EXPORT_TXT = "export.txt";
+
+	private static final Logger console = LoggerFactory.getLogger("console");
 
 	private String author;
 
@@ -42,10 +52,16 @@ public class UserRanking {
 	}
 
 	public void exportTextFile() throws IOException {
-		FileWriter writer = new FileWriter(LuceneUtils.getFileDirectoryForUser(this.author) + File.separator + EXPORT_TXT);
+		String fileName = LuceneUtils.USERDATA + File.separator + author + ".txt";
+		File exportFile = new File(fileName);
+
+		FileUtils.touch(exportFile);
+
+		FileWriter writer = new FileWriter(exportFile);
 		for (UserRankingEntry termFreq : this.terms) {
 			writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
 		}
 		writer.close();
+		console.info("User Ranking for [{}] created in [{}].", author, fileName);
 	}
 }

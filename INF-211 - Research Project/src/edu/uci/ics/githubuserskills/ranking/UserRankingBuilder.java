@@ -15,6 +15,8 @@ public class UserRankingBuilder {
 
 	private Map<String, Long> freqs;
 
+	private String author;
+
 	/**
 	 * 
 	 */
@@ -22,11 +24,15 @@ public class UserRankingBuilder {
 		this.reset();
 	}
 
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
 	public void increment(String term) {
 		Long freq = this.freqs.get(term);
 
 		if (freq == null) {
-			freq = 0L;
+			freq = 1L;
 		} else {
 			freq++;
 		}
@@ -35,6 +41,8 @@ public class UserRankingBuilder {
 
 	public UserRanking build() {
 		UserRanking ranking = new UserRanking();
+
+		ranking.setAuthor(author);
 
 		for (Entry<String, Long> freq : this.freqs.entrySet()) {
 			ranking.addEntry(new UserRankingEntry(freq.getKey(), freq.getValue()));
