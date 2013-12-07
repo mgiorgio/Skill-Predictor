@@ -16,6 +16,7 @@ import edu.uci.ics.githubuserskills.model.RawSkillData;
 import edu.uci.ics.githubuserskills.model.SkillDataType;
 import edu.uci.ics.githubuserskills.model.db.Comments;
 import edu.uci.ics.githubuserskills.model.db.Commit;
+import edu.uci.ics.githubuserskills.model.db.PatchedFile;
 
 /**
  * @author shriti Class to bring together all data access objects to produce
@@ -45,19 +46,29 @@ public class DataAggregator {
 			Iterator<Commit> it = authorCommits.iterator();
 			while (it.hasNext()) {
 				Commit commit = it.next();
-				RawSkillData commitPatchData = new RawSkillData();
-				RawSkillData commitMessageData = new RawSkillData();
-				commitPatchData.setAuthor(login);
-				commitMessageData.setAuthor(login);
-				commitPatchData.setType(SkillDataType.COMMIT_PATCH);
-				commitMessageData.setType(SkillDataType.COMMIT_MESSAGE);
-				commitPatchData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0, 10) + " 00:00:00").getTime());
-				commitMessageData.setTimestamp(Timestamp.valueOf(commit.getTime().substring(0, 10) + " 00:00:00").getTime());
 
-				commitPatchData.setContents(commit.getPatch());
+				long commitTime = Timestamp.valueOf(commit.getTime().substring(0, 10) + " 00:00:00").getTime();
+
+				// Process commit message.
+				RawSkillData commitMessageData = new RawSkillData();
+				commitMessageData.setAuthor(login);
+				commitMessageData.setType(SkillDataType.COMMIT_MESSAGE);
+				commitMessageData.setTimestamp(commitTime);
 				commitMessageData.setContents(commit.getCommit_message());
-				rawDataList.add(commitPatchData);
+
 				rawDataList.add(commitMessageData);
+
+				// Process patches.
+				for (PatchedFile eachPatchedFile : commit.getPatches()) {
+
+					RawSkillData commitPatchData = new RawSkillData();
+					commitPatchData.setAuthor(login);
+					commitPatchData.setType(SkillDataType.COMMIT_PATCH);
+					commitPatchData.setTimestamp(commitTime);
+					commitPatchData.setContents(eachPatchedFile.getPatch());
+
+					rawDataList.add(commitPatchData);
+				}
 			}
 		} else {
 			log.debug("No commits were found for [{}]", login);

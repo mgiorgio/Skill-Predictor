@@ -21,8 +21,6 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 
 	private static final Logger log = LoggerFactory.getLogger(DirectLuceneBasedUserRankingCreator.class);
 
-	private UserRankingBuilder freqsHolder;
-
 	private DictionaryBasedAnalyzer analyzer;
 
 	public DirectLuceneBasedUserRankingCreator() {
@@ -62,10 +60,6 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 		}
 
 		return userRankingBuilder.build();
-	}
-
-	public UserRankingBuilder getFreqsHolder() {
-		return this.freqsHolder;
 	}
 
 	@Override
