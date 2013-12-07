@@ -71,7 +71,7 @@ public class UserRanking {
 	public void exportTextFile() throws IOException {
 		this.sort();
 
-		String fileName = LuceneUtils.USERDATA + File.separator + author + ".txt";
+		String fileName = LuceneUtils.getUserRankingsDirectory() + File.separator + author + ".txt";
 		File exportFile = new File(fileName);
 
 		FileUtils.touch(exportFile);

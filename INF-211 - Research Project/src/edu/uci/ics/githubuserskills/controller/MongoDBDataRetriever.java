@@ -1,9 +1,11 @@
 package edu.uci.ics.githubuserskills.controller;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +31,21 @@ public class MongoDBDataRetriever {
 	}
 
 	public void retrieve(String author) throws DataAccessException, UserRankingCreationException, UnknownHostException {
-		this.retrieve(Arrays.asList(author));
+		this.retrieve(Arrays.asList(author), new ArrayList<String>());
+	}
+
+	public void retrieveExcluding(List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
+		this.retrieve(this.retrieveLogins(), exclude);
 	}
 
 	public void retrieve() throws DataAccessException, UserRankingCreationException, UnknownHostException {
-		this.retrieve(this.retrieveLogins());
+		this.retrieveExcluding(new ArrayList<String>());
 	}
 
-	private void retrieve(List<String> logins) throws DataAccessException, UserRankingCreationException, UnknownHostException {
-		for (String login : logins) {
+	private void retrieve(List<String> logins, List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
+		List<String> include = ListUtils.removeAll(logins, exclude);
+
+		for (String login : include) {
 			console.info("Profiling user {}...", login);
 
 			// Collect the RawSkillData objects associated to each login.

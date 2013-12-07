@@ -11,6 +11,8 @@ import org.apache.lucene.util.Version;
 
 public class LuceneUtils {
 
+	private static final String RANKINGS = "rankings";
+
 	private static final String FIXED_DICTIONARY_PATH = "fixeddictionary.txt";
 
 	public static final String USERDATA = "userdata";
@@ -30,6 +32,10 @@ public class LuceneUtils {
 
 	public static String getExecutionDirectory() {
 		return USERDATA + File.separator + LuceneUtils.EXECUTION_TOKEN;
+	}
+
+	public static String getUserRankingsDirectory() {
+		return USERDATA + File.separator + RANKINGS;
 	}
 
 	public static String getFixedDictionaryPath() {
