@@ -45,6 +45,7 @@ public class MongoDBDataRetriever {
 	private void retrieve(List<String> logins, List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
 		List<String> include = ListUtils.removeAll(logins, exclude);
 
+		console.info("About to profile {} users...", include.size());
 		for (String login : include) {
 			console.info("Profiling user {}...", login);
 

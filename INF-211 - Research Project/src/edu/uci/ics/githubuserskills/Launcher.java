@@ -39,7 +39,7 @@ public class Launcher {
 			} else {
 				List<String> rankedAuthors = collectUsersAlreadyRanked();
 				console.info("Profiling all authors ({} excluded)", rankedAuthors.size());
-				dataRetriever.retrieve();
+				dataRetriever.retrieveExcluding(rankedAuthors);
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
