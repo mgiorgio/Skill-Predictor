@@ -15,7 +15,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import edu.uci.ics.githubuserskills.model.db.Author;
 import edu.uci.ics.githubuserskills.model.db.Comments;
 import edu.uci.ics.githubuserskills.model.db.Commit;
 import edu.uci.ics.githubuserskills.model.db.PatchedFile;
@@ -50,7 +49,6 @@ public class ContentDAO {
 		MongoDBHelper helper = new MongoDBHelper();
 		DBCollection commitTable = getTable(helper, "commits");
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		Author author = dao.getAuthorbyLogin(login);
 
 		BasicDBObject commitSearchQuery = new BasicDBObject("author.login", login);
 		DBCursor commitCursor = helper.findData(commitSearchQuery, commitTable, null);
@@ -59,7 +57,7 @@ public class ContentDAO {
 			DBObject commitObject = commitCursor.next();
 			Commit commit = new Commit();
 			if (commitObject.get("author") != null)
-				commit.setAuthor(author.toString());
+				commit.setAuthor(login);
 			else
 				continue;
 			if (((DBObject) commitObject.get("commit")).get("message") != null)
@@ -142,7 +140,6 @@ public class ContentDAO {
 		List<Comments> issueCommentList = new ArrayList<Comments>();
 		DBCollection issueCommentsTable = getTable(helper, "issue_comments");
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		Author author = dao.getAuthorbyLogin(login);
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
 		DBCursor cursor = helper.findData(commitSearchQuery, issueCommentsTable, null);
 
@@ -152,7 +149,7 @@ public class ContentDAO {
 			DBObject obj = cursor.next();
 			// could directly set it to author. comparison not needed
 			if (obj.get("user") != null)
-				comment.setAuthor(author);
+				comment.setAuthor(login);
 			else
 				continue;
 			if (obj.get("body") != null)
@@ -182,7 +179,6 @@ public class ContentDAO {
 		List<Comments> PullRequestCommentList = new ArrayList<Comments>();
 		DBCollection pullRequestCommentsTable = getTable(helper, "pull_request_comments");
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		Author author = dao.getAuthorbyLogin(login);
 		// BasicDBObject commitSearchQuery = new BasicDBObject("user",
 		// authorDBObject);
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
@@ -194,7 +190,7 @@ public class ContentDAO {
 			DBObject obj = cursor.next();
 			// could directly set it to author. comparison not needed
 			if (obj.get("user") != null)
-				comment.setAuthor(author);
+				comment.setAuthor(login);
 			else
 				continue;
 			if (obj.get("body") != null)
@@ -225,7 +221,6 @@ public class ContentDAO {
 		DBCollection commitCommentsTable = getTable(helper, "commit_comments");
 		AuthorAndUserDAO dao = new AuthorAndUserDAO();
 		// authorDBObject.put("site_admin", false);
-		Author author = dao.getAuthorbyLogin(login);
 		// BasicDBObject commitSearchQuery = new BasicDBObject("user",
 		// authorDBObject);
 		BasicDBObject commitSearchQuery = new BasicDBObject("user", login);
@@ -237,7 +232,7 @@ public class ContentDAO {
 			DBObject obj = cursor.next();
 			// could directly set it to author. comparison not needed
 			if (obj.get("user") != null)
-				comment.setAuthor(author);
+				comment.setAuthor(login);
 			else
 				continue;
 			if (obj.get("body") != null)
