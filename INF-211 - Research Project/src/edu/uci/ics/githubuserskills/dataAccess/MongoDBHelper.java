@@ -14,25 +14,25 @@ import com.mongodb.MongoClient;
  */
 public class MongoDBHelper {
 
-	public MongoClient getConnection(String Server, int Port) throws UnknownHostException {
+	public static MongoClient getConnection(String Server, int Port) throws UnknownHostException {
 		MongoClient mongo = new MongoClient("localhost", 27017);
 		return mongo;
 	}
 
-	public DB getDatabase(String databaseName, MongoClient mongo) {
+	public static DB getDatabase(String databaseName, MongoClient mongo) {
 		DB db = mongo.getDB(databaseName);
 		return db;
 	}
 
-	public Set<String> getAllTables(DB db) {
+	public static Set<String> getAllTables(DB db) {
 		return (db.getCollectionNames());
 	}
 
-	public DBCollection getTable(String tableName, DB db) {
+	public static DBCollection getTable(String tableName, DB db) {
 		return (db.getCollection(tableName));
 	}
 
-	public DBCursor findData(BasicDBObject searchQuery, DBCollection table, BasicDBObject fields) {
+	public static DBCursor findData(BasicDBObject searchQuery, DBCollection table, BasicDBObject fields) {
 		if (fields == null)
 			return (table.find(searchQuery));
 		else
