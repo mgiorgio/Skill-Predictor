@@ -1,7 +1,11 @@
 package edu.uci.ics.githubuserskills.controller;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.githubuserskills.dataAccess.AuthorAndUserDAO;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
@@ -11,6 +15,8 @@ import edu.uci.ics.githubuserskills.model.SkillDataType;
 import edu.uci.ics.githubuserskills.ranking.UserRankingCreator;
 
 public class MongoDBDataRetriever {
+
+	private static final Logger console = LoggerFactory.getLogger("console");
 
 	private UserRankingCreator userRankingCreator;
 
@@ -22,15 +28,24 @@ public class MongoDBDataRetriever {
 		this.getUserRankingCreator().initialize();
 	}
 
-	public void start() throws DataAccessException, UserRankingCreationException, UnknownHostException {
-		// Get all the logins.
-		List<String> logins = this.retrieveLogins();
+	public void retrieve(String author) throws DataAccessException, UserRankingCreationException, UnknownHostException {
+		this.retrieve(Arrays.asList(author));
+	}
 
+	public void retrieve() throws DataAccessException, UserRankingCreationException, UnknownHostException {
+		this.retrieve(this.retrieveLogins());
+	}
+
+	private void retrieve(List<String> logins) throws DataAccessException, UserRankingCreationException, UnknownHostException {
 		for (String login : logins) {
+			console.info("Profiling user {}...", login);
+
 			// Collect the RawSkillData objects associated to each login.
+			console.info("Retrieving Raw Skill Data from Github for {}...", login);
 			List<RawSkillData> rawDataForLogin = this.retrieveSkillDataForLogin(login);
 
 			// Index the obtained objects.
+			console.info("Creating User Ranking for {}...", login);
 			this.getUserRankingCreator().rank(login, rawDataForLogin);
 		}
 

@@ -13,10 +13,18 @@
     </encoder>
   </appender>
   <appender name="file" class="ch.qos.logback.core.FileAppender">
-  	<file>inf221.log</file>
+  	<file>githubuserskills.log</file>
   	<append>false</append>
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%-5level] [%logger{36}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <appender name="tracerfile" class="ch.qos.logback.core.FileAppender">
+  	<file>tracedata.log</file>
+  	<append>false</append>
+    <encoder>
+      <pattern>%msg%n</pattern>
     </encoder>
   </appender>
   
@@ -25,9 +33,13 @@
     <appender-ref ref="file" />
   </logger>
 
-  <logger level="info" name="edu.uci.ics">
+  <logger level="info" name="edu.uci.ics.githubuserskills">
   	<appender-ref ref="STDOUT" />
     <appender-ref ref="file" />
+  </logger>
+  
+  <logger level="info" name="trace">
+    <appender-ref ref="tracerfile" />
   </logger>
 
   <root level="error">
