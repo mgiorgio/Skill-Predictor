@@ -13,7 +13,7 @@ public class LuceneFSDirectoryFactory implements LuceneDirectoryFactory {
 
 	@Override
 	public Directory openDirectory(String author) throws IOException {
-		return FSDirectory.open(new File(LuceneUtils.getFileDirectoryForUser(author)));
+		return FSDirectory.open(new File(Utils.getFileDirectoryForUser(author)));
 	}
 
 }

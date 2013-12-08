@@ -13,7 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
+import edu.uci.ics.githubuserskills.lucene.Utils;
 
 /**
  * @author Matias
@@ -22,6 +22,8 @@ import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 public class UserRanking {
 
 	private static final Logger console = LoggerFactory.getLogger("console");
+
+	private String profile;
 
 	private String author;
 
@@ -33,6 +35,14 @@ public class UserRanking {
 
 	public void addEntry(UserRankingEntry frequencyPair) {
 		this.terms.add(frequencyPair);
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	public String getAuthor() {
@@ -72,7 +82,7 @@ public class UserRanking {
 		this.sort();
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(LuceneUtils.getUserRankingsDirectory()).append(File.separator).append(author).append(".txt");
+		builder.append(Utils.getUserRankingsDirectory()).append(File.separator).append(author).append("-").append(this.profile).append(".txt");
 		String fileName = builder.toString();
 		File exportFile = new File(fileName);
 

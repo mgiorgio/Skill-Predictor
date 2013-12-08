@@ -11,6 +11,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
 /**
  * @author shriti Class to fetch User object and Author object from database
@@ -28,7 +29,7 @@ public class AuthorAndUserDAO {
 	 */
 	public DBCollection getTable() throws UnknownHostException {
 
-		MongoClient DbClient = MongoDBHelper.getConnection("localhost", 27017);
+		MongoClient DbClient = MongoDBHelper.getConnection(new ServerAddress("localhost", 27017));
 		DB database = MongoDBHelper.getDatabase(databaseName, DbClient);
 		DBCollection table = MongoDBHelper.getTable(tableName, database);
 		return table;

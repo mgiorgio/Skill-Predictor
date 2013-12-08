@@ -33,16 +33,16 @@
     <appender-ref ref="file" />
   </logger>
 
-  <logger level="info" name="edu.uci.ics.githubuserskills">
+  <logger name="edu.uci.ics" level="INFO">
   	<appender-ref ref="STDOUT" />
     <appender-ref ref="file" />
   </logger>
   
-  <logger level="info" name="trace">
+  <logger name="trace" level="INFO">
     <appender-ref ref="tracerfile" />
   </logger>
 
-  <root level="error">
+  <root level="ERROR">
     <appender-ref ref="file" />
   </root>
 </configuration>

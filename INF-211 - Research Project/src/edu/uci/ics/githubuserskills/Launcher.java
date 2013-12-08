@@ -1,6 +1,7 @@
 package edu.uci.ics.githubuserskills;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,12 @@ import org.slf4j.LoggerFactory;
 import edu.uci.ics.githubuserskills.controller.MongoDBDataRetriever;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
-import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
+import edu.uci.ics.githubuserskills.lucene.Utils;
+import edu.uci.ics.githubuserskills.ranking.DictionaryManager;
 import edu.uci.ics.githubuserskills.ranking.DirectLuceneBasedUserRankingCreator;
 import edu.uci.ics.githubuserskills.ranking.UserRankingCreator;
 import edu.uci.ics.githubuserskills.ranking.UserRankingExporter;
+import edu.uci.ics.githubuserskills.ranking.export.strategy.FilterEmptyRankingsStrategy;
 
 public class Launcher {
 
@@ -25,11 +28,11 @@ public class Launcher {
 
 	public static void main(String[] args) {
 		console.info("Launching Github Profiler...");
-		UserRankingCreator rankingCreator = new UserRankingExporter(new DirectLuceneBasedUserRankingCreator());
-
-		MongoDBDataRetriever dataRetriever = new MongoDBDataRetriever(rankingCreator);
 
 		try {
+			UserRankingCreator rankingCreator = new UserRankingExporter(new DirectLuceneBasedUserRankingCreator(DictionaryManager.getDictionaries()), new FilterEmptyRankingsStrategy());
+
+			MongoDBDataRetriever dataRetriever = new MongoDBDataRetriever(rankingCreator);
 			dataRetriever.initialize();
 
 			if (isSingleAuthor(args)) {
@@ -50,13 +53,16 @@ public class Launcher {
 		} catch (UserRankingCreationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			console.info("Github Profiler shut down.");
 		}
 	}
 
 	private static List<String> collectUsersAlreadyRanked() {
-		File dir = new File(LuceneUtils.getUserRankingsDirectory());
+		File dir = new File(Utils.getUserRankingsDirectory());
 		List<String> authors = new ArrayList<String>();
 
 		String[] files = dir.list();

@@ -14,6 +14,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
 import edu.uci.ics.githubuserskills.model.db.Comments;
 import edu.uci.ics.githubuserskills.model.db.Commit;
@@ -25,16 +26,8 @@ import edu.uci.ics.githubuserskills.model.db.PatchedFile;
  */
 public class ContentDAO {
 
-	private MongoClient mongoClient;
-
 	private MongoClient getClient() throws UnknownHostException {
-		MongoClient client = null;
-		if (this.mongoClient == null) {
-			client = MongoDBHelper.getConnection("localhost", 27017);
-			this.mongoClient = client;
-		}
-
-		return this.mongoClient;
+		return MongoDBHelper.getConnection(new ServerAddress("localhost", 27017));
 	}
 
 	/**

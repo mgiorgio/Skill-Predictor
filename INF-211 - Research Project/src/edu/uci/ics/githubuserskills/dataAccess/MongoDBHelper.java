@@ -1,6 +1,8 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import com.mongodb.BasicDBObject;
@@ -8,15 +10,26 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
 /**
  * @author shriti Utility to operate over the database
  */
 public class MongoDBHelper {
 
-	public static MongoClient getConnection(String Server, int Port) throws UnknownHostException {
-		MongoClient mongo = new MongoClient("localhost", 27017);
-		return mongo;
+	private static Map<ServerAddress, MongoClient> cachedConnections = new HashMap<ServerAddress, MongoClient>();
+
+	public static MongoClient getConnection(ServerAddress address) throws UnknownHostException {
+		// MongoClient mongo = new MongoClient("localhost", 27017);
+
+		MongoClient mongoClient = cachedConnections.get(address);
+
+		if (mongoClient == null) {
+			// MongoClient mongo = new MongoClient("localhost", 27017);
+			mongoClient = new MongoClient(address);
+			cachedConnections.put(address, mongoClient);
+		}
+		return mongoClient;
 	}
 
 	public static DB getDatabase(String databaseName, MongoClient mongo) {

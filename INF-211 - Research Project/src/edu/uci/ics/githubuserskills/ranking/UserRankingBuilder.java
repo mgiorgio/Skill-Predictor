@@ -17,11 +17,17 @@ public class UserRankingBuilder {
 
 	private String author;
 
+	private String profile;
+
 	/**
 	 * 
 	 */
 	public UserRankingBuilder() {
 		this.reset();
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
 	}
 
 	public void setAuthor(String author) {
@@ -43,6 +49,7 @@ public class UserRankingBuilder {
 		UserRanking ranking = new UserRanking();
 
 		ranking.setAuthor(author);
+		ranking.setProfile(profile);
 
 		for (Entry<String, Long> freq : this.freqs.entrySet()) {
 			ranking.addEntry(new UserRankingEntry(freq.getKey(), freq.getValue()));

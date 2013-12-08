@@ -17,7 +17,7 @@ import org.apache.lucene.util.BytesRef;
 
 import edu.uci.ics.githubuserskills.lucene.LuceneDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
-import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
+import edu.uci.ics.githubuserskills.lucene.Utils;
 import edu.uci.ics.githubuserskills.ranking.UserRankingEntry;
 import edu.uci.ics.githubuserskills.ranking.UserRanking;
 
@@ -49,7 +49,7 @@ public class LuceneRankingCreator {
 	}
 
 	private List<String> getAuthors() {
-		File[] subDirectories = new File(LuceneUtils.getExecutionDirectory()).listFiles(new FileFilter() {
+		File[] subDirectories = new File(Utils.getExecutionDirectory()).listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File pathname) {

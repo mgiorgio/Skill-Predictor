@@ -1,29 +1,32 @@
 package edu.uci.ics.githubuserskills.lucene;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LuceneUtils {
+public class Utils {
 
 	private static final String RANKINGS = "rankings";
 
-	private static final String FIXED_DICTIONARY_PATH = "fixeddictionary.txt";
+	public static final String CONFIG_FILENAME = "config.xml";
 
 	public static final String USERDATA = "userdata";
 
 	public static final String DATA = "data";
 
+	public static final String CONFIG = "cfg";
+
 	public static final String EXECUTION_TOKEN = String.valueOf(System.currentTimeMillis());
 
 	public static final Version LUCENE_VERSION = Version.LUCENE_46;
 
-	private LuceneUtils() {
+	private static final Logger console = LoggerFactory.getLogger("console");
+
+	private static final Logger log = LoggerFactory.getLogger(Utils.class);
+
+	private Utils() {
 	}
 
 	public static String getFileDirectoryForUser(String user) {
@@ -31,21 +34,11 @@ public class LuceneUtils {
 	}
 
 	public static String getExecutionDirectory() {
-		return USERDATA + File.separator + LuceneUtils.EXECUTION_TOKEN;
+		return USERDATA + File.separator + Utils.EXECUTION_TOKEN;
 	}
 
 	public static String getUserRankingsDirectory() {
 		return USERDATA + File.separator + RANKINGS;
-	}
-
-	public static String getFixedDictionaryPath() {
-		return DATA + File.separator + FIXED_DICTIONARY_PATH;
-	}
-
-	public static Set<String> loadFixedDictionary() throws IOException {
-		List<String> words = FileUtils.readLines(new File(LuceneUtils.getFixedDictionaryPath()));
-
-		return new HashSet<String>(words);
 	}
 
 	public static class Globals {
