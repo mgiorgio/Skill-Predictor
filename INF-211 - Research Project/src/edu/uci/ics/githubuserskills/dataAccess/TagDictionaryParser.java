@@ -1,13 +1,14 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.uci.ics.githubuserskills.lucene.LuceneUtils;
 
 
 public class TagDictionaryParser {
@@ -23,12 +24,8 @@ public class TagDictionaryParser {
 		log.info("populating phrase list and tag list");
 		log.info("Resource Path: " + getClass().getResource("../").getPath());
 		String filePath=null;
-		try {
-			filePath = new File(".").getCanonicalPath() + relativePathToDictionary;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//filePath = new File(".").getCanonicalPath() + relativePathToDictionary;
+		filePath = LuceneUtils.getFixedDictionaryPath();
 		File f = new File(filePath);
 		if(!f.exists())
 		{
