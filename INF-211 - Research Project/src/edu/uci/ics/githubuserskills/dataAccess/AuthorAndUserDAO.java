@@ -26,23 +26,21 @@ public class AuthorAndUserDAO {
 	 * @return DBCollection table
 	 * @throws UnknownHostException
 	 */
-	public DBCollection getTable(MongoDBHelper helper) throws UnknownHostException {
+	public DBCollection getTable() throws UnknownHostException {
 
-		MongoClient DbClient = helper.getConnection("localhost", 27017);
-		DB database = helper.getDatabase(databaseName, DbClient);
-		DBCollection table = helper.getTable(tableName, database);
+		MongoClient DbClient = MongoDBHelper.getConnection("localhost", 27017);
+		DB database = MongoDBHelper.getDatabase(databaseName, DbClient);
+		DBCollection table = MongoDBHelper.getTable(tableName, database);
 		return table;
 
 	}
 
 	public DBObject getAuthorDBObject(String login) throws UnknownHostException {
-
-		MongoDBHelper helper = new MongoDBHelper();
 		BasicDBObject searchQuery = new BasicDBObject("login", login);
 		BasicDBObject excludeFields = new BasicDBObject("_id", 0).append("name", 0).append("company", 0).append("blog", 0).append("location", 0).append("email", 0).append("hireable", 0)
 				.append("bio", 0).append("public_repos", 0).append("followers", 0).append("following", 0).append("created_at", 0).append("updated_at", 0).append("public_gists", 0);
-		DBCollection table = getTable(helper);
-		DBCursor cursor = helper.findData(searchQuery, table, excludeFields);
+		DBCollection table = getTable();
+		DBCursor cursor = MongoDBHelper.findData(searchQuery, table, excludeFields);
 		if (cursor.size() > 1) {
 			// TODO log a warning message that more than one entry found for a
 			// unique login
@@ -54,9 +52,7 @@ public class AuthorAndUserDAO {
 	}
 
 	public BasicDBList getAllLogins() throws UnknownHostException {
-		// TODO: extract all logins
-		MongoDBHelper helper = new MongoDBHelper();
-		DBCollection table = getTable(helper);
+		DBCollection table = getTable();
 		BasicDBList list = (BasicDBList) table.distinct("login");
 		return list;
 	}
@@ -64,10 +60,6 @@ public class AuthorAndUserDAO {
 	public List<String> getLoginList() throws UnknownHostException {
 		List<String> loginList = new ArrayList<String>();
 		BasicDBList list = getAllLogins();
-		/*
-		 * Iterator it = list.iterator(); while(it.hasNext()) { Object obj =
-		 * it.next(); loginList.add(obj.toString()); }
-		 */
 		for (int i = 0; i < list.size(); i++) {
 			loginList.add(list.get(i).toString());
 		}

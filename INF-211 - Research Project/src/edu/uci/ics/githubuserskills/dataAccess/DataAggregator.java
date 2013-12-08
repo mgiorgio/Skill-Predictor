@@ -40,8 +40,8 @@ public class DataAggregator {
 
 		// get commit data
 		log.debug("Querying commits for [{}]...", login);
-		ArrayList<Commit> authorCommits = (ArrayList<Commit>) contentDAO.getCommits(login);
-		if (authorCommits.size() != 0) {
+		List<Commit> authorCommits = (List<Commit>) contentDAO.getCommits(login);
+		if (!authorCommits.isEmpty()) {
 			log.debug("About to process [{}] commits for [{}]...", authorCommits.size(), login);
 			Iterator<Commit> it = authorCommits.iterator();
 			while (it.hasNext()) {

@@ -25,16 +25,26 @@ import edu.uci.ics.githubuserskills.model.db.PatchedFile;
  */
 public class ContentDAO {
 
+	private MongoClient mongoClient;
+
+	private MongoClient getClient() throws UnknownHostException {
+		MongoClient client = null;
+		if (this.mongoClient == null) {
+			client = MongoDBHelper.getConnection("localhost", 27017);
+			this.mongoClient = client;
+		}
+
+		return this.mongoClient;
+	}
+
 	/**
 	 * @param helper
 	 * @return DBCollection table
 	 * @throws UnknownHostException
 	 */
-	public DBCollection getTable(MongoDBHelper helper, String tableName) throws UnknownHostException {
-
-		MongoClient DbClient = helper.getConnection("localhost", 27017);
-		DB database = helper.getDatabase("msr14", DbClient);
-		DBCollection table = helper.getTable(tableName, database);
+	public DBCollection getTable(String tableName) throws UnknownHostException {
+		DB database = MongoDBHelper.getDatabase("msr14", this.getClient());
+		DBCollection table = MongoDBHelper.getTable(tableName, database);
 		return table;
 
 	}
@@ -46,42 +56,43 @@ public class ContentDAO {
 		// return a list of commits object, commits made by the author
 		List<Commit> commitList = new ArrayList<Commit>();
 		// DBCollection commitTable = helper.getTable("commits", database);
-		MongoDBHelper helper = new MongoDBHelper();
-		DBCollection commitTable = getTable(helper, "commits");
-		AuthorAndUserDAO dao = new AuthorAndUserDAO();
+		DBCollection commitTable = getTable("commits");
 
 		BasicDBObject commitSearchQuery = new BasicDBObject("author.login", login);
-		DBCursor commitCursor = helper.findData(commitSearchQuery, commitTable, null);
+		DBCursor commitCursor = MongoDBHelper.findData(commitSearchQuery, commitTable, null);
 
-		while (commitCursor.hasNext()) {
-			DBObject commitObject = commitCursor.next();
-			Commit commit = new Commit();
-			if (commitObject.get("author") != null)
-				commit.setAuthor(login);
-			else
-				continue;
-			if (((DBObject) commitObject.get("commit")).get("message") != null)
-				commit.setCommit_message(((DBObject) commitObject.get("commit")).get("message").toString());
-			else
-				commit.setCommit_message(null);
+		try {
+			while (commitCursor.hasNext()) {
+				DBObject commitObject = commitCursor.next();
+				Commit commit = new Commit();
+				if (commitObject.get("author") != null)
+					commit.setAuthor(login);
+				else
+					continue;
+				if (((DBObject) commitObject.get("commit")).get("message") != null)
+					commit.setCommit_message(((DBObject) commitObject.get("commit")).get("message").toString());
+				else
+					commit.setCommit_message(null);
 
-			if (commitObject.get("comments_url") != null)
-				commit.setComments_url(commitObject.get("comments_url").toString());
-			else
-				commit.setComments_url(null);
+				if (commitObject.get("comments_url") != null)
+					commit.setComments_url(commitObject.get("comments_url").toString());
+				else
+					commit.setComments_url(null);
 
-			BasicDBList fileList = (BasicDBList) commitObject.get("files");
+				BasicDBList fileList = (BasicDBList) commitObject.get("files");
 
-			processPatches(commit, fileList);
+				processPatches(commit, fileList);
 
-			if (((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date") != null)
-				commit.setTime(((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date").toString());
-			else
-				commit.setTime(null);
+				if (((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date") != null)
+					commit.setTime(((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date").toString());
+				else
+					commit.setTime(null);
 
-			commitList.add(commit);
+				commitList.add(commit);
+			}
+		} finally {
+			commitCursor.close();
 		}
-		commitCursor.close();
 
 		return commitList;
 	}
@@ -135,35 +146,35 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getIssueComments(String login) throws UnknownHostException {
-		MongoDBHelper helper = new MongoDBHelper();
-
 		List<Comments> issueCommentList = new ArrayList<Comments>();
-		DBCollection issueCommentsTable = getTable(helper, "issue_comments");
-		AuthorAndUserDAO dao = new AuthorAndUserDAO();
+		DBCollection issueCommentsTable = getTable("issue_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
-		DBCursor cursor = helper.findData(commitSearchQuery, issueCommentsTable, null);
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, issueCommentsTable, null);
 
-		while (cursor.hasNext()) {
-			Comments comment = new Comments();
-			comment.setType("Issue Comment");
-			DBObject obj = cursor.next();
-			// could directly set it to author. comparison not needed
-			if (obj.get("user") != null)
-				comment.setAuthor(login);
-			else
-				continue;
-			if (obj.get("body") != null)
-				comment.setComment(obj.get("body").toString());
-			else
-				comment.setComment(null);
-			if (obj.get("created_at") != null)
-				comment.setTime(obj.get("created_at").toString());
-			else
-				comment.setTime(null);
+		try {
+			while (cursor.hasNext()) {
+				Comments comment = new Comments();
+				comment.setType("Issue Comment");
+				DBObject obj = cursor.next();
+				// could directly set it to author. comparison not needed
+				if (obj.get("user") != null)
+					comment.setAuthor(login);
+				else
+					continue;
+				if (obj.get("body") != null)
+					comment.setComment(obj.get("body").toString());
+				else
+					comment.setComment(null);
+				if (obj.get("created_at") != null)
+					comment.setTime(obj.get("created_at").toString());
+				else
+					comment.setTime(null);
 
-			issueCommentList.add(comment);
+				issueCommentList.add(comment);
+			}
+		} finally {
+			cursor.close();
 		}
-		cursor.close();
 
 		return issueCommentList;
 	}
@@ -174,37 +185,35 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getPullRequestComments(String login) throws UnknownHostException {
-		MongoDBHelper helper = new MongoDBHelper();
-
 		List<Comments> PullRequestCommentList = new ArrayList<Comments>();
-		DBCollection pullRequestCommentsTable = getTable(helper, "pull_request_comments");
-		AuthorAndUserDAO dao = new AuthorAndUserDAO();
-		// BasicDBObject commitSearchQuery = new BasicDBObject("user",
-		// authorDBObject);
+		DBCollection pullRequestCommentsTable = getTable("pull_request_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
-		DBCursor cursor = helper.findData(commitSearchQuery, pullRequestCommentsTable, null);
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, pullRequestCommentsTable, null);
 
-		while (cursor.hasNext()) {
-			Comments comment = new Comments();
-			comment.setType("Pull Request Comment");
-			DBObject obj = cursor.next();
-			// could directly set it to author. comparison not needed
-			if (obj.get("user") != null)
-				comment.setAuthor(login);
-			else
-				continue;
-			if (obj.get("body") != null)
-				comment.setComment(obj.get("body").toString());
-			else
-				comment.setComment(null);
-			if (obj.get("created_at") != null)
-				comment.setTime(obj.get("created_at").toString());
-			else
-				comment.setTime(null);
+		try {
+			while (cursor.hasNext()) {
+				Comments comment = new Comments();
+				comment.setType("Pull Request Comment");
+				DBObject obj = cursor.next();
+				// could directly set it to author. comparison not needed
+				if (obj.get("user") != null)
+					comment.setAuthor(login);
+				else
+					continue;
+				if (obj.get("body") != null)
+					comment.setComment(obj.get("body").toString());
+				else
+					comment.setComment(null);
+				if (obj.get("created_at") != null)
+					comment.setTime(obj.get("created_at").toString());
+				else
+					comment.setTime(null);
 
-			PullRequestCommentList.add(comment);
+				PullRequestCommentList.add(comment);
+			}
+		} finally {
+			cursor.close();
 		}
-		cursor.close();
 
 		return PullRequestCommentList;
 	}
@@ -215,36 +224,37 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getCommitComments(String login) throws UnknownHostException {
-		MongoDBHelper helper = new MongoDBHelper();
-
 		List<Comments> CommitCommentList = new ArrayList<Comments>();
-		DBCollection commitCommentsTable = getTable(helper, "commit_comments");
-		AuthorAndUserDAO dao = new AuthorAndUserDAO();
+		DBCollection commitCommentsTable = getTable("commit_comments");
 		// authorDBObject.put("site_admin", false);
 		// BasicDBObject commitSearchQuery = new BasicDBObject("user",
 		// authorDBObject);
 		BasicDBObject commitSearchQuery = new BasicDBObject("user", login);
-		DBCursor cursor = helper.findData(commitSearchQuery, commitCommentsTable, null);
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, commitCommentsTable, null);
 
-		while (cursor.hasNext()) {
-			Comments comment = new Comments();
-			comment.setType("Commit Comment");
-			DBObject obj = cursor.next();
-			// could directly set it to author. comparison not needed
-			if (obj.get("user") != null)
-				comment.setAuthor(login);
-			else
-				continue;
-			if (obj.get("body") != null)
-				comment.setComment(obj.get("body").toString());
-			else
-				comment.setComment(null);
-			if (obj.get("created_at") != null)
-				comment.setTime(obj.get("created_at").toString());
-			else
-				comment.setTime(null);
+		try {
+			while (cursor.hasNext()) {
+				Comments comment = new Comments();
+				comment.setType("Commit Comment");
+				DBObject obj = cursor.next();
+				// could directly set it to author. comparison not needed
+				if (obj.get("user") != null)
+					comment.setAuthor(login);
+				else
+					continue;
+				if (obj.get("body") != null)
+					comment.setComment(obj.get("body").toString());
+				else
+					comment.setComment(null);
+				if (obj.get("created_at") != null)
+					comment.setTime(obj.get("created_at").toString());
+				else
+					comment.setTime(null);
 
-			CommitCommentList.add(comment);
+				CommitCommentList.add(comment);
+			}
+		} finally {
+			cursor.close();
 		}
 
 		return CommitCommentList;

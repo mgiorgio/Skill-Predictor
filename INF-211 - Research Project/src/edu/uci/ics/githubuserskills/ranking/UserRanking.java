@@ -71,16 +71,21 @@ public class UserRanking {
 	public void exportTextFile() throws IOException {
 		this.sort();
 
-		String fileName = LuceneUtils.getUserRankingsDirectory() + File.separator + author + ".txt";
+		StringBuilder builder = new StringBuilder();
+		builder.append(LuceneUtils.getUserRankingsDirectory()).append(File.separator).append(author).append(".txt");
+		String fileName = builder.toString();
 		File exportFile = new File(fileName);
 
 		FileUtils.touch(exportFile);
 
 		FileWriter writer = new FileWriter(exportFile);
-		for (UserRankingEntry termFreq : this.terms) {
-			writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
+		try {
+			for (UserRankingEntry termFreq : this.terms) {
+				writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
+			}
+		} finally {
+			writer.close();
 		}
-		writer.close();
 		console.info("User Ranking for [{}] created in [{}].", author, fileName);
 	}
 }
