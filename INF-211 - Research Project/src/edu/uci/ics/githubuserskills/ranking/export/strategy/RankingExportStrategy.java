@@ -1,6 +1,6 @@
 package edu.uci.ics.githubuserskills.ranking.export.strategy;
 
-import edu.uci.ics.githubuserskills.ranking.UserRanking;
+import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 
 /**
  * @author matias
@@ -8,6 +8,6 @@ import edu.uci.ics.githubuserskills.ranking.UserRanking;
  */
 public interface RankingExportStrategy {
 
-	public boolean exportable(UserRanking ranking);
+	public boolean exportable(UserDomainRanking ranking);
 
 }

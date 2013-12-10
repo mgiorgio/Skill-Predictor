@@ -1,14 +1,13 @@
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.profile;
 
-import java.util.Collection;
 import java.util.List;
 
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
-public interface UserRankingCreator {
+public interface RawSkillDataProcessor {
 
-	public Collection<UserRanking> rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException;
+	public UserProfile rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException;
 
 	public void initialize() throws UserRankingCreationException;
 

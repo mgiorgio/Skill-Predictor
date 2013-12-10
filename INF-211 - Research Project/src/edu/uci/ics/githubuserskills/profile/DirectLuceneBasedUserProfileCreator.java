@@ -1,4 +1,4 @@
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.profile;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -17,24 +17,23 @@ import edu.uci.ics.githubuserskills.model.RawSkillData;
  * @author Matias
  * 
  */
-public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
+public class DirectLuceneBasedUserProfileCreator implements RawSkillDataProcessor {
 
-	private static final Logger log = LoggerFactory.getLogger(DirectLuceneBasedUserRankingCreator.class);
+	private static final Logger log = LoggerFactory.getLogger(DirectLuceneBasedUserProfileCreator.class);
 
 	private DictionaryBasedAnalyzer analyzer;
 
 	private Collection<SkillTermsDictionary> dictionaries;
 
-	public DirectLuceneBasedUserRankingCreator(Collection<SkillTermsDictionary> dictionaries) {
+	public DirectLuceneBasedUserProfileCreator(Collection<SkillTermsDictionary> dictionaries) {
 		this.dictionaries = dictionaries;
 	}
 
 	@Override
-	public Collection<UserRanking> rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException {
-		CompoundUserRankingBuilder userRankingBuilder;
-		userRankingBuilder = new CompoundUserRankingBuilder(this.dictionaries);
+	public UserProfile rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException {
+		UserProfileBuilder userProfileBuilder = new UserProfileBuilder(this.dictionaries);
 
-		userRankingBuilder.setAuthor(author);
+		userProfileBuilder.setAuthor(author);
 
 		try {
 			for (RawSkillData rawSkillData : rawSkillDataObjects) {
@@ -50,7 +49,7 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 					ts.reset(); // Resets this stream to the beginning.
 								// (Required)
 					while (ts.incrementToken()) {
-						userRankingBuilder.increment(termAtt.toString());
+						userProfileBuilder.increment(termAtt.toString());
 					}
 					ts.end(); // Perform end-of-stream operations, e.g. set the
 								// final
@@ -64,7 +63,7 @@ public class DirectLuceneBasedUserRankingCreator implements UserRankingCreator {
 			throw new UserRankingCreationException(e);
 		}
 
-		return userRankingBuilder.buildAll();
+		return userProfileBuilder.buildProfile();
 	}
 
 	@Override

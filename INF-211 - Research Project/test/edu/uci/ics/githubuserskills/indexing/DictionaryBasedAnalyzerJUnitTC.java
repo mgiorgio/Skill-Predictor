@@ -14,8 +14,8 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.junit.Assert;
 import org.junit.Test;
 
-import edu.uci.ics.githubuserskills.ranking.DictionaryBasedAnalyzer;
-import edu.uci.ics.githubuserskills.ranking.SkillTermsDictionary;
+import edu.uci.ics.githubuserskills.profile.DictionaryBasedAnalyzer;
+import edu.uci.ics.githubuserskills.profile.SkillTermsDictionary;
 
 public class DictionaryBasedAnalyzerJUnitTC {
 

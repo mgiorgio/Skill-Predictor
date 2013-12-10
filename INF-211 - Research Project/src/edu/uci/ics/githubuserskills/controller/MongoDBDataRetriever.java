@@ -14,15 +14,15 @@ import edu.uci.ics.githubuserskills.dataAccess.DataAccessException;
 import edu.uci.ics.githubuserskills.dataAccess.DataAggregator;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 import edu.uci.ics.githubuserskills.model.SkillDataType;
-import edu.uci.ics.githubuserskills.ranking.UserRankingCreator;
+import edu.uci.ics.githubuserskills.profile.RawSkillDataProcessor;
 
 public class MongoDBDataRetriever {
 
 	private static final Logger console = LoggerFactory.getLogger("console");
 
-	private UserRankingCreator userRankingCreator;
+	private RawSkillDataProcessor userRankingCreator;
 
-	public MongoDBDataRetriever(UserRankingCreator indexer) {
+	public MongoDBDataRetriever(RawSkillDataProcessor indexer) {
 		this.setUserRankingCreator(indexer);
 	}
 
@@ -42,7 +42,7 @@ public class MongoDBDataRetriever {
 		this.retrieveExcluding(new ArrayList<String>());
 	}
 
-	private void retrieve(List<String> logins, List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
+	public void retrieve(List<String> logins, List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
 		List<String> include = ListUtils.removeAll(logins, exclude);
 
 		console.info("About to profile {} users...", include.size());
@@ -62,11 +62,11 @@ public class MongoDBDataRetriever {
 
 	}
 
-	private UserRankingCreator getUserRankingCreator() {
+	private RawSkillDataProcessor getUserRankingCreator() {
 		return userRankingCreator;
 	}
 
-	protected void setUserRankingCreator(UserRankingCreator indexer) {
+	protected void setUserRankingCreator(RawSkillDataProcessor indexer) {
 		this.userRankingCreator = indexer;
 	}
 

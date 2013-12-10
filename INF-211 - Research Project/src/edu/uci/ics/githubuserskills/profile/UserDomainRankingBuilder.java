@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.profile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map.Entry;
  * @author Matias
  * 
  */
-public class UserRankingBuilder {
+public class UserDomainRankingBuilder {
 
 	private Map<String, Long> freqs;
 
@@ -22,7 +22,7 @@ public class UserRankingBuilder {
 	/**
 	 * 
 	 */
-	public UserRankingBuilder() {
+	public UserDomainRankingBuilder() {
 		this.reset();
 	}
 
@@ -30,26 +30,38 @@ public class UserRankingBuilder {
 		this.profile = profile;
 	}
 
+	public String getAuthor() {
+		return author;
+	}
+
+	public String getProfile() {
+		return profile;
+	}
+
 	public void setAuthor(String author) {
 		this.author = author;
 	}
 
-	public void increment(String term) {
+	public void increment(String term, long quantity) {
 		Long freq = this.freqs.get(term);
 
 		if (freq == null) {
-			freq = 1L;
+			freq = quantity;
 		} else {
-			freq++;
+			freq += quantity;
 		}
 		this.freqs.put(term, freq);
 	}
 
-	public UserRanking build() {
-		UserRanking ranking = new UserRanking();
+	public void increment(String term) {
+		this.increment(term, 1L);
+	}
+
+	public UserDomainRanking build() {
+		UserDomainRanking ranking = new UserDomainRanking();
 
 		ranking.setAuthor(author);
-		ranking.setProfile(profile);
+		ranking.setDomain(profile);
 
 		for (Entry<String, Long> freq : this.freqs.entrySet()) {
 			ranking.addEntry(new UserRankingEntry(freq.getKey(), freq.getValue()));

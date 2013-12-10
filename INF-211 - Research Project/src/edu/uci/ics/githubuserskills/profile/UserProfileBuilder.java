@@ -1,40 +1,31 @@
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.profile;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class CompoundUserRankingBuilder extends UserRankingBuilder {
+public class UserProfileBuilder extends UserDomainRankingBuilder {
 
-	private Map<SkillTermsDictionary, UserRankingBuilder> builders;
+	private Map<SkillTermsDictionary, UserDomainRankingBuilder> builders;
 
-	public CompoundUserRankingBuilder(Collection<SkillTermsDictionary> dictionaries) {
+	public UserProfileBuilder(Collection<SkillTermsDictionary> dictionaries) {
 		this.initBuilders(dictionaries);
 	}
 
 	private void initBuilders(Collection<SkillTermsDictionary> dictionaries) {
-		builders = new HashMap<SkillTermsDictionary, UserRankingBuilder>();
+		builders = new HashMap<SkillTermsDictionary, UserDomainRankingBuilder>();
 		for (SkillTermsDictionary skillTermsDictionary : dictionaries) {
-			UserRankingBuilder rankingBuilder = new UserRankingBuilder();
+			UserDomainRankingBuilder rankingBuilder = new UserDomainRankingBuilder();
 			rankingBuilder.setProfile(skillTermsDictionary.getName());
 			builders.put(skillTermsDictionary, rankingBuilder);
 		}
 	}
 
-	@Override
-	public void setAuthor(String author) {
-		for (UserRankingBuilder eachBuilder : builders.values()) {
-			eachBuilder.setAuthor(author);
-		}
-	}
-
-	@Override
-	public void increment(String term) {
-		for (Entry<SkillTermsDictionary, UserRankingBuilder> entry : builders.entrySet()) {
+	public void increment(String term, long quantity) {
+		for (Entry<SkillTermsDictionary, UserDomainRankingBuilder> entry : builders.entrySet()) {
 			if (this.isInDictionary(term, entry.getKey())) {
-				entry.getValue().increment(term);
+				entry.getValue().increment(term, quantity);
 			}
 		}
 	}
@@ -43,13 +34,15 @@ public class CompoundUserRankingBuilder extends UserRankingBuilder {
 		return dictionary.getDictionary().contains(term);
 	}
 
-	public Collection<UserRanking> buildAll() {
-		Collection<UserRanking> rankings = new ArrayList<UserRanking>();
+	public UserProfile buildProfile() {
+		UserProfile profile = new UserProfile(getAuthor());
 
-		for (UserRankingBuilder eachBuilder : builders.values()) {
-			rankings.add(eachBuilder.build());
+		for (UserDomainRankingBuilder eachBuilder : builders.values()) {
+			eachBuilder.setAuthor(this.getAuthor());
+			UserDomainRanking userDomainRanking = eachBuilder.build();
+			profile.addUserDomainRanking(userDomainRanking);
 		}
 
-		return rankings;
+		return profile;
 	}
 }

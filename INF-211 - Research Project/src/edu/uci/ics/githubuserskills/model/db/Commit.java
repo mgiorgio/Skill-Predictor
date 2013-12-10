@@ -1,6 +1,7 @@
 package edu.uci.ics.githubuserskills.model.db;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * @author shriti Model objects for Commits
@@ -15,7 +16,7 @@ public class Commit {
 	private Collection<PatchedFile> patches;
 
 	public Commit() {
-
+		patches = new LinkedList<PatchedFile>();
 	}
 
 	public String getAuthor() {

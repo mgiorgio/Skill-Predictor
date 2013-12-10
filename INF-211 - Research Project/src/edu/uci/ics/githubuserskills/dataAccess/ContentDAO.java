@@ -74,7 +74,9 @@ public class ContentDAO {
 
 				BasicDBList fileList = (BasicDBList) commitObject.get("files");
 
-				processPatches(commit, fileList);
+				if (fileList != null) {
+					processPatches(commit, fileList);
+				}
 
 				if (((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date") != null)
 					commit.setTime(((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date").toString());

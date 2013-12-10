@@ -18,8 +18,8 @@ import org.apache.lucene.util.BytesRef;
 import edu.uci.ics.githubuserskills.lucene.LuceneDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.LuceneFSDirectoryFactory;
 import edu.uci.ics.githubuserskills.lucene.Utils;
-import edu.uci.ics.githubuserskills.ranking.UserRankingEntry;
-import edu.uci.ics.githubuserskills.ranking.UserRanking;
+import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
+import edu.uci.ics.githubuserskills.profile.UserRankingEntry;
 
 public class LuceneRankingCreator {
 
@@ -37,9 +37,9 @@ public class LuceneRankingCreator {
 		return directoryFactory;
 	}
 
-	public List<UserRanking> rankings() throws UserRankingCreationException {
+	public List<UserDomainRanking> rankings() throws UserRankingCreationException {
 		List<String> authors = this.getAuthors();
-		List<UserRanking> rankings = new LinkedList<UserRanking>();
+		List<UserDomainRanking> rankings = new LinkedList<UserDomainRanking>();
 
 		for (String author : authors) {
 			rankings.add(this.ranking(author));
@@ -66,7 +66,7 @@ public class LuceneRankingCreator {
 		return authors;
 	}
 
-	public UserRanking ranking(String author) throws UserRankingCreationException {
+	public UserDomainRanking ranking(String author) throws UserRankingCreationException {
 		IndexReader indexReader;
 		try {
 			indexReader = this.openIndexReaderForAuthor(author);
@@ -100,8 +100,8 @@ public class LuceneRankingCreator {
 		return createUserRanking(freqMap);
 	}
 
-	private UserRanking createUserRanking(Map<String, Long> freqMap) {
-		UserRanking ranking = new UserRanking();
+	private UserDomainRanking createUserRanking(Map<String, Long> freqMap) {
+		UserDomainRanking ranking = new UserDomainRanking();
 		for (Entry<String, Long> termFreq : freqMap.entrySet()) {
 			UserRankingEntry pair = new UserRankingEntry(termFreq.getKey(), termFreq.getValue());
 			ranking.addEntry(pair);

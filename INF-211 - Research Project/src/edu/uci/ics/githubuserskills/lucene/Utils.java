@@ -6,6 +6,8 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
+
 public class Utils {
 
 	private static final String RANKINGS = "rankings";
@@ -39,6 +41,12 @@ public class Utils {
 
 	public static String getUserRankingsDirectory() {
 		return USERDATA + File.separator + RANKINGS;
+	}
+
+	public static String getUserDomainResultsFile(UserDomainRanking domainRanking) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Utils.getUserRankingsDirectory()).append(File.separator).append(domainRanking.getAuthor()).append("-").append(domainRanking.getDomain()).append(".txt");
+		return builder.toString();
 	}
 
 	public static class Globals {

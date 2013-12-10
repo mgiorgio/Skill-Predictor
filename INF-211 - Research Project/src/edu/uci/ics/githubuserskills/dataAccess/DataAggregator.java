@@ -1,8 +1,9 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,8 @@ public class DataAggregator {
 
 	private static final Logger log = LoggerFactory.getLogger(DataAggregator.class);
 
+	private Calendar cachedCalendar = GregorianCalendar.getInstance();
+
 	/**
 	 * @param login
 	 * @return ArrayList<RawSkillData>
@@ -47,7 +50,7 @@ public class DataAggregator {
 			while (it.hasNext()) {
 				Commit commit = it.next();
 
-				long commitTime = Timestamp.valueOf(commit.getTime().substring(0, 10) + " 00:00:00").getTime();
+				long commitTime = parseTime(commit.getTime());
 
 				// Process commit message.
 				RawSkillData commitMessageData = new RawSkillData();
@@ -86,7 +89,7 @@ public class DataAggregator {
 				RawSkillData authorComment = new RawSkillData();
 				authorComment.setAuthor(login);
 				authorComment.setType(SkillDataType.ISSUE_COMMENT);
-				authorComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0, 10) + " 00:00:00").getTime());
+				authorComment.setTimestamp(this.parseTime(comment.getTime()));
 				authorComment.setContents(comment.getComment());
 				rawDataList.add(authorComment);
 			}
@@ -106,7 +109,7 @@ public class DataAggregator {
 				RawSkillData authorPullRequestComment = new RawSkillData();
 				authorPullRequestComment.setAuthor(login);
 				authorPullRequestComment.setType(SkillDataType.PULL_REQUEST_COMMENT);
-				authorPullRequestComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0, 10) + " 00:00:00").getTime());
+				authorPullRequestComment.setTimestamp(this.parseTime(comment.getTime()));
 				authorPullRequestComment.setContents(comment.getComment());
 				rawDataList.add(authorPullRequestComment);
 			}
@@ -126,7 +129,7 @@ public class DataAggregator {
 				RawSkillData authorCommitComment = new RawSkillData();
 				authorCommitComment.setAuthor(login);
 				authorCommitComment.setType(SkillDataType.COMMIT_COMMENT);
-				authorCommitComment.setTimestamp(Timestamp.valueOf(comment.getTime().substring(0, 10) + " 00:00:00").getTime());
+				authorCommitComment.setTimestamp(this.parseTime(comment.getTime()));
 				authorCommitComment.setContents(comment.getComment());
 				rawDataList.add(authorCommitComment);
 			}
@@ -139,6 +142,14 @@ public class DataAggregator {
 		log.info("DB query for [{}] finished.", login);
 		return rawDataList;
 
+	}
+
+	private long parseTime(String time) {
+		cachedCalendar.set(Integer.parseInt(time.substring(0, 4)), Integer.parseInt(time.substring(5, 7)) - 1, Integer.parseInt(time.substring(8, 10)));
+		cachedCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(11, 13)));
+		cachedCalendar.set(Calendar.MINUTE, Integer.parseInt(time.substring(14, 16)));
+		cachedCalendar.set(Calendar.SECOND, Integer.parseInt(time.substring(17, 19)));
+		return cachedCalendar.getTimeInMillis();
 	}
 
 	/**

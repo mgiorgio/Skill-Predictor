@@ -1,56 +1,65 @@
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.ranking.export;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
-import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
-import edu.uci.ics.githubuserskills.model.RawSkillData;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.uci.ics.githubuserskills.lucene.Utils;
+import edu.uci.ics.githubuserskills.profile.RawSkillDataProcessor;
+import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
+import edu.uci.ics.githubuserskills.profile.UserProfile;
+import edu.uci.ics.githubuserskills.profile.UserRankingEntry;
 import edu.uci.ics.githubuserskills.ranking.export.strategy.RankingExportStrategy;
 
 /**
- * Decorator of {@link UserRankingCreator} that exports the {@link UserRanking}
- * before returning the control to the caller method.
+ * Decorator of {@link RawSkillDataProcessor} that exports the
+ * {@link UserDomainRanking} before returning the control to the caller method.
  * 
  * @author matias
  * 
  */
-public class UserRankingExporter implements UserRankingCreator {
-
-	private UserRankingCreator innerUserRankingCreator;
+public class UserRankingFileExporter {
 
 	private RankingExportStrategy exportStrategy;
 
-	public UserRankingExporter(UserRankingCreator rankingCreator, RankingExportStrategy exportStrategy) {
-		this.innerUserRankingCreator = rankingCreator;
+	private static final Logger console = LoggerFactory.getLogger("console");
+
+	public UserRankingFileExporter(RankingExportStrategy exportStrategy) {
 		this.exportStrategy = exportStrategy;
 	}
 
-	@Override
-	public Collection<UserRanking> rank(String author, List<RawSkillData> rawSkillDataObjects) throws UserRankingCreationException {
-		Collection<UserRanking> rankings = this.innerUserRankingCreator.rank(author, rawSkillDataObjects);
-
-		for (UserRanking ranking : rankings) {
-			if (this.exportStrategy.exportable(ranking)) {
-				try {
-					ranking.exportTextFile();
-				} catch (IOException e) {
-					throw new UserRankingCreationException(e);
-				}
+	public void export(UserProfile userProfile, boolean stats) throws IOException {
+		for (UserDomainRanking eachUserRanking : userProfile.getDomainRankings().values()) {
+			if (this.exportStrategy.exportable(eachUserRanking)) {
+				exportUserRankingDomain(eachUserRanking, stats);
 			}
 		}
-
-		return rankings;
 	}
 
-	@Override
-	public void initialize() throws UserRankingCreationException {
-		this.innerUserRankingCreator.initialize();
-	}
+	private void exportUserRankingDomain(UserDomainRanking domainRanking, boolean stats) throws IOException {
+		List<UserRankingEntry> sortedTerms = domainRanking.getSortedTerms();
 
-	@Override
-	public void close() throws UserRankingCreationException {
-		this.innerUserRankingCreator.close();
-	}
+		String fileName = Utils.getUserDomainResultsFile(domainRanking);
+		File exportFile = new File(fileName);
 
+		FileUtils.touch(exportFile);
+
+		FileWriter writer = new FileWriter(exportFile);
+		try {
+			if (stats) {
+				writer.write(String.format("[Expertise=%.4f]\n", domainRanking.getDomainStats().getExpertise()));
+			}
+			for (UserRankingEntry termFreq : sortedTerms) {
+				writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
+			}
+		} finally {
+			writer.close();
+		}
+		console.info("User Profile for [{}:{}] created in [{}].", domainRanking.getAuthor(), domainRanking.getDomain(), fileName);
+	}
 }

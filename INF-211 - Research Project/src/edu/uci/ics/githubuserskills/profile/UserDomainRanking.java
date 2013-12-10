@@ -1,48 +1,89 @@
-package edu.uci.ics.githubuserskills.ranking;
+package edu.uci.ics.githubuserskills.profile;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.uci.ics.githubuserskills.lucene.Utils;
+import edu.uci.ics.githubuserskills.ranking.stats.UserDomainStats;
 
 /**
  * @author Matias
  * 
  */
-public class UserRanking {
+public class UserDomainRanking {
 
 	private static final Logger console = LoggerFactory.getLogger("console");
 
-	private String profile;
+	private String domain;
 
 	private String author;
 
-	private List<UserRankingEntry> terms;
+	private Map<String, UserRankingEntry> terms;
 
-	public UserRanking() {
-		this.terms = new LinkedList<UserRankingEntry>();
+	private long sumOfAllFreqs;
+
+	private UserDomainStats domainStats;
+
+	public UserDomainRanking() {
+		this.terms = new HashMap<String, UserRankingEntry>();
+	}
+
+	public UserDomainStats getDomainStats() {
+		if (this.domainStats == null) {
+			this.domainStats = new UserDomainStats(getDomain());
+		}
+		return domainStats;
+	}
+
+	public void setDomainStats(UserDomainStats domainStats) {
+		this.domainStats = domainStats;
+	}
+
+	public Map<String, UserRankingEntry> getTerms() {
+		return new HashMap<String, UserRankingEntry>(this.terms);
+	}
+
+	public void prepareForStats() {
+		this.calculateWeights();
+	}
+
+	private void calculateWeights() {
+		for (UserRankingEntry entry : terms.values()) {
+			entry.setWeight((double) entry.getFrequency() / (double) this.sumOfAllFreqs);
+		}
+	}
+
+	public long getSumOfAllFreqs() {
+		return this.sumOfAllFreqs;
+	}
+
+	/**
+	 * Accumulates the frequency for this term. The total result will be
+	 * accessible in {@link UserDomainRanking#sumOfAllFreqs}.
+	 * 
+	 * @param freqEntry
+	 */
+	private void accumulateTermFrequency(UserRankingEntry freqEntry) {
+		this.sumOfAllFreqs += freqEntry.getFrequency();
 	}
 
 	public void addEntry(UserRankingEntry frequencyPair) {
-		this.terms.add(frequencyPair);
+		this.terms.put(frequencyPair.getTerm(), frequencyPair);
+		this.accumulateTermFrequency(frequencyPair);
 	}
 
-	public String getProfile() {
-		return profile;
+	public String getDomain() {
+		return domain;
 	}
 
-	public void setProfile(String profile) {
-		this.profile = profile;
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 
 	public String getAuthor() {
@@ -53,8 +94,8 @@ public class UserRanking {
 		this.author = author;
 	}
 
-	protected void sort() {
-		Collections.sort(this.terms, new Comparator<UserRankingEntry>() {
+	protected void sort(List<UserRankingEntry> terms) {
+		Collections.sort(terms, new Comparator<UserRankingEntry>() {
 
 			@Override
 			public int compare(UserRankingEntry o1, UserRankingEntry o2) {
@@ -69,33 +110,9 @@ public class UserRanking {
 		});
 	}
 
-	public List<UserRankingEntry> getTerms() {
-		this.sort();
-		return new ArrayList<UserRankingEntry>(this.terms);
-	}
-
-	public void setTerms(List<UserRankingEntry> terms) {
-		this.terms = terms;
-	}
-
-	public void exportTextFile() throws IOException {
-		this.sort();
-
-		StringBuilder builder = new StringBuilder();
-		builder.append(Utils.getUserRankingsDirectory()).append(File.separator).append(author).append("-").append(this.profile).append(".txt");
-		String fileName = builder.toString();
-		File exportFile = new File(fileName);
-
-		FileUtils.touch(exportFile);
-
-		FileWriter writer = new FileWriter(exportFile);
-		try {
-			for (UserRankingEntry termFreq : this.terms) {
-				writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
-			}
-		} finally {
-			writer.close();
-		}
-		console.info("User Ranking for [{}] created in [{}].", author, fileName);
+	public List<UserRankingEntry> getSortedTerms() {
+		List<UserRankingEntry> listOfTerms = new ArrayList<UserRankingEntry>(this.terms.values());
+		this.sort(listOfTerms);
+		return listOfTerms;
 	}
 }
