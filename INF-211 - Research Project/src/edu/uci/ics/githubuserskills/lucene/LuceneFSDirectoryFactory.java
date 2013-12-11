@@ -6,6 +6,10 @@ import java.io.IOException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+/**
+ * @author matias
+ *
+ */
 public class LuceneFSDirectoryFactory implements LuceneDirectoryFactory {
 
 	public LuceneFSDirectoryFactory() {

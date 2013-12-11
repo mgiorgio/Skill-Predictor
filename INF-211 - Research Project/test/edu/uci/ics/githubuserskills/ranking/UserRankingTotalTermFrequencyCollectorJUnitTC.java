@@ -15,6 +15,10 @@ import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 import edu.uci.ics.githubuserskills.profile.UserProfile;
 import edu.uci.ics.githubuserskills.profile.UserRankingEntry;
 
+/**
+ * @author matias
+ *
+ */
 public class UserRankingTotalTermFrequencyCollectorJUnitTC {
 
 	private ManualUserProfileCreator manualCreator;

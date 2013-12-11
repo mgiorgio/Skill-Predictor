@@ -16,6 +16,10 @@ import edu.uci.ics.githubuserskills.model.RawSkillData;
 import edu.uci.ics.githubuserskills.model.SkillDataType;
 import edu.uci.ics.githubuserskills.profile.RawSkillDataProcessor;
 
+/**
+ * @author matias
+ *
+ */
 public class MongoDBDataRetriever {
 
 	private static final Logger console = LoggerFactory.getLogger("console");
@@ -45,12 +49,16 @@ public class MongoDBDataRetriever {
 	public void retrieve(List<String> logins, List<String> exclude) throws DataAccessException, UserRankingCreationException, UnknownHostException {
 		List<String> include = ListUtils.removeAll(logins, exclude);
 
-		console.info("About to profile {} users...", include.size());
+		int totalLoginsToProfile = include.size();
+		int currentProfiledUser = 0;
+		console.info("About to profile {} users...", totalLoginsToProfile);
 		for (String login : include) {
 			console.info("Profiling user {}...", login);
 
+			currentProfiledUser++;
+
 			// Collect the RawSkillData objects associated to each login.
-			console.info("Retrieving Raw Skill Data from Github for {}...", login);
+			console.info("Retrieving Raw Skill Data from Github for {} ({} / {})...", login, currentProfiledUser, totalLoginsToProfile);
 			List<RawSkillData> rawDataForLogin = this.retrieveSkillDataForLogin(login);
 
 			// Index the obtained objects.

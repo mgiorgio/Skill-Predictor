@@ -1,7 +1,6 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -80,7 +79,7 @@ public class DataAggregator {
 
 		// get issue comments
 		log.debug("Querying issue comments for [{}]...", login);
-		ArrayList<Comments> authorIssueComments = (ArrayList<Comments>) contentDAO.getIssueComments(login);
+		List<Comments> authorIssueComments = (List<Comments>) contentDAO.getIssueComments(login);
 		if (authorIssueComments.size() != 0) {
 			log.debug("About to process [{}] issue comments for [{}]...", authorIssueComments.size(), login);
 			Iterator<Comments> it = authorIssueComments.iterator();
@@ -100,7 +99,7 @@ public class DataAggregator {
 
 		// get pull request comments
 		log.debug("Querying pull requests for [{}]...", login);
-		ArrayList<Comments> authorPullRequestComments = (ArrayList<Comments>) contentDAO.getPullRequestComments(login);
+		List<Comments> authorPullRequestComments = (List<Comments>) contentDAO.getPullRequestComments(login);
 		if (authorPullRequestComments.size() != 0) {
 			log.debug("About to process [{}] pull request comments for [{}]...", authorPullRequestComments.size(), login);
 			Iterator<Comments> it = authorPullRequestComments.iterator();
@@ -120,7 +119,7 @@ public class DataAggregator {
 
 		// get commit comments
 		log.debug("Querying commit comments for [{}]...", login);
-		ArrayList<Comments> authorCommitComments = (ArrayList<Comments>) contentDAO.getCommitComments(login);
+		List<Comments> authorCommitComments = (List<Comments>) contentDAO.getCommitComments(login);
 		if (authorCommitComments.size() != 0) {
 			log.debug("About to process [{}] commit comments for [{}]...", authorCommitComments.size(), login);
 			Iterator<Comments> it = authorCommitComments.iterator();

@@ -21,6 +21,10 @@ import edu.uci.ics.githubuserskills.lucene.Utils;
 import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 import edu.uci.ics.githubuserskills.profile.UserRankingEntry;
 
+/**
+ * @author matias
+ *
+ */
 public class LuceneRankingCreator {
 
 	private LuceneDirectoryFactory directoryFactory;

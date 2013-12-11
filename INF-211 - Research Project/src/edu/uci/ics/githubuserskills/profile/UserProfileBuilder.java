@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * @author matias
+ *
+ */
 public class UserProfileBuilder extends UserDomainRankingBuilder {
 
 	private Map<SkillTermsDictionary, UserDomainRankingBuilder> builders;

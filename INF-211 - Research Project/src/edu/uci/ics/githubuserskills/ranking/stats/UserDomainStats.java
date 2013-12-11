@@ -1,5 +1,9 @@
 package edu.uci.ics.githubuserskills.ranking.stats;
 
+/**
+ * @author matias
+ *
+ */
 public class UserDomainStats {
 
 	private String domain;

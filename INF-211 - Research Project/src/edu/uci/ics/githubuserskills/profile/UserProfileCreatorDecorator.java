@@ -5,6 +5,10 @@ import java.util.List;
 import edu.uci.ics.githubuserskills.controller.UserRankingCreationException;
 import edu.uci.ics.githubuserskills.model.RawSkillData;
 
+/**
+ * @author matias
+ *
+ */
 public class UserProfileCreatorDecorator implements RawSkillDataProcessor {
 
 	private RawSkillDataProcessor innerCreator;

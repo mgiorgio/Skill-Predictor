@@ -1,7 +1,6 @@
 package edu.uci.ics.githubuserskills.dataAccess;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,7 +46,7 @@ public class ContentDAO {
 	// content_url, patch, filename, stats
 	public List<Commit> getCommits(String login) throws UnknownHostException {
 		// return a list of commits object, commits made by the author
-		List<Commit> commitList = new ArrayList<Commit>();
+		List<Commit> commitList = new LinkedList<Commit>();
 		// DBCollection commitTable = helper.getTable("commits", database);
 		DBCollection commitTable = getTable("commits");
 
@@ -141,7 +140,7 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getIssueComments(String login) throws UnknownHostException {
-		List<Comments> issueCommentList = new ArrayList<Comments>();
+		List<Comments> issueCommentList = new LinkedList<Comments>();
 		DBCollection issueCommentsTable = getTable("issue_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
 		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, issueCommentsTable, null);
@@ -180,7 +179,7 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getPullRequestComments(String login) throws UnknownHostException {
-		List<Comments> PullRequestCommentList = new ArrayList<Comments>();
+		List<Comments> PullRequestCommentList = new LinkedList<Comments>();
 		DBCollection pullRequestCommentsTable = getTable("pull_request_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
 		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, pullRequestCommentsTable, null);
@@ -219,7 +218,7 @@ public class ContentDAO {
 	 * @throws UnknownHostException
 	 */
 	public List<Comments> getCommitComments(String login) throws UnknownHostException {
-		List<Comments> CommitCommentList = new ArrayList<Comments>();
+		List<Comments> CommitCommentList = new LinkedList<Comments>();
 		DBCollection commitCommentsTable = getTable("commit_comments");
 		// authorDBObject.put("site_admin", false);
 		// BasicDBObject commitSearchQuery = new BasicDBObject("user",

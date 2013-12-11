@@ -27,6 +27,10 @@ import edu.uci.ics.githubuserskills.ranking.export.UserRankingFileExporter;
 import edu.uci.ics.githubuserskills.ranking.export.strategy.FilterEmptyRankingsStrategy;
 import edu.uci.ics.githubuserskills.ranking.stats.IntraDomainStatsCalculator;
 
+/**
+ * @author matias
+ * 
+ */
 public class Launcher {
 
 	private static final Logger console = LoggerFactory.getLogger("console");

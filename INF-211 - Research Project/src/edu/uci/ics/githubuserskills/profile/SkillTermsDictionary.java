@@ -2,6 +2,10 @@ package edu.uci.ics.githubuserskills.profile;
 
 import java.util.Set;
 
+/**
+ * @author matias
+ *
+ */
 public class SkillTermsDictionary {
 
 	private String name;

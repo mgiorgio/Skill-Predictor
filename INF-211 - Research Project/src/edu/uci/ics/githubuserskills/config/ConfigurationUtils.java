@@ -11,6 +11,10 @@ import org.apache.commons.configuration.XMLConfiguration;
 import edu.uci.ics.githubuserskills.lucene.Utils;
 import edu.uci.ics.githubuserskills.model.SkillProfile;
 
+/**
+ * @author matias
+ *
+ */
 public class ConfigurationUtils {
 
 	private static XMLConfiguration config;

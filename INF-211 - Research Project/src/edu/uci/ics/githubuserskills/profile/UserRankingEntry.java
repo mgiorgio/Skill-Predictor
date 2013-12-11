@@ -1,5 +1,9 @@
 package edu.uci.ics.githubuserskills.profile;
 
+/**
+ * @author matias
+ *
+ */
 public class UserRankingEntry {
 
 	private String term;

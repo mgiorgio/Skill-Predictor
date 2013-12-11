@@ -3,6 +3,10 @@ package edu.uci.ics.githubuserskills.ranking.stats;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author matias
+ *
+ */
 public class UserProfileStats {
 
 	private Map<String, UserDomainStats> domainStats;

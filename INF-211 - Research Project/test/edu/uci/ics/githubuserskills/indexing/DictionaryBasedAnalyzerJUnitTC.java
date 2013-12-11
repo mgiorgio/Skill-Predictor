@@ -17,6 +17,10 @@ import org.junit.Test;
 import edu.uci.ics.githubuserskills.profile.DictionaryBasedAnalyzer;
 import edu.uci.ics.githubuserskills.profile.SkillTermsDictionary;
 
+/**
+ * @author matias
+ *
+ */
 public class DictionaryBasedAnalyzerJUnitTC {
 
 	public DictionaryBasedAnalyzerJUnitTC() {

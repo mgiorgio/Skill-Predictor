@@ -1,5 +1,9 @@
 package edu.uci.ics.githubuserskills.model;
 
+/**
+ * @author matias
+ *
+ */
 public enum SkillDataType {
 
 	COMMIT_PATCH("Commit patch"), COMMIT_MESSAGE("Commit message"), COMMIT_COMMENT("Commit comment"), PULL_REQUEST_COMMENT("Pull Request comment"), ISSUE_COMMENT("Issue comment");

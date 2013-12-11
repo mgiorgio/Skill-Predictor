@@ -1,5 +1,9 @@
 package edu.uci.ics.githubuserskills.controller;
 
+/**
+ * @author matias
+ *
+ */
 public class UserRankingCreationException extends Exception {
 
 	public UserRankingCreationException() {

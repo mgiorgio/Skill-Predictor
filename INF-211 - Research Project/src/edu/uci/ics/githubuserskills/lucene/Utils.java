@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 
+/**
+ * @author matias
+ *
+ */
 public class Utils {
 
 	private static final String RANKINGS = "rankings";

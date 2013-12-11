@@ -1,5 +1,9 @@
 package edu.uci.ics.githubuserskills.model;
 
+/**
+ * @author matias
+ *
+ */
 public class SkillProfile {
 
 	private String name;
