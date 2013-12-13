@@ -17,7 +17,7 @@ import edu.uci.ics.githubuserskills.lucene.Utils;
 import edu.uci.ics.githubuserskills.model.SkillProfile;
 
 /**
- * This is an ad-hoc tool that puts all the expertise scores into a single file.
+ * This is a ad-hoc tool that puts all the expertise scores into a single file.
  * 
  * @author matias
  * 
