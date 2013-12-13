@@ -2,16 +2,36 @@ package edu.uci.ics.githubuserskills.ranking.stats;
 
 /**
  * @author matias
- *
+ * 
  */
 public class UserDomainStats {
 
+	/**
+	 * The domain name.
+	 */
 	private String domain;
 
-	private double expertise;
+	/**
+	 * Profile metric for intra-domain analysis.
+	 */
+	private double score;
+
+	/**
+	 * Metric for inter-domain analysis. It reflects the weight (w) of the
+	 * profile (p) associated to this domain (d) for a user (u).
+	 */
+	private double profileWeight;
 
 	public UserDomainStats(String domain) {
 		this.domain = domain;
+	}
+
+	public double getProfileWeight() {
+		return profileWeight;
+	}
+
+	public void setProfileWeight(double profileWeight) {
+		this.profileWeight = profileWeight;
 	}
 
 	public String getDomain() {
@@ -22,12 +42,11 @@ public class UserDomainStats {
 		this.domain = domain;
 	}
 
-	public double getExpertise() {
-		return expertise;
+	public double getScore() {
+		return score;
 	}
 
-	public void setExpertise(double expertise) {
-		this.expertise = expertise;
+	public void setScore(double score) {
+		this.score = score;
 	}
-
 }

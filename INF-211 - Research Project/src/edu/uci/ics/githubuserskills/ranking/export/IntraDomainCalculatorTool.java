@@ -22,11 +22,14 @@ import edu.uci.ics.githubuserskills.model.SkillProfile;
  * @author matias
  * 
  */
-public class ExpertiseAggregatorTool {
+public class IntraDomainCalculatorTool {
+
+	private static String workingDir;
 
 	public static void main(String[] args) {
 		try {
-			File resultsDirectory = new File(Utils.getUserRankingsDirectory());
+			workingDir = getWorkingDir(args).getAbsolutePath();
+			File resultsDirectory = new File(workingDir);
 
 			createOutputExpertiseFiles();
 
@@ -39,13 +42,29 @@ public class ExpertiseAggregatorTool {
 			});
 
 			for (int i = 0; i < allUserResults.length; i++) {
+				if (i % 100 == 0) {
+					System.out.print(i);
+					System.out.print("/");
+					System.out.println(allUserResults.length);
+				}
 				String eachResult = allUserResults[i];
 				appendExpertise(eachResult);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.err.println(e.getMessage());
 		}
 
+	}
+
+	private static File getWorkingDir(String[] args) {
+		String dirSufix = "";
+
+		for (int i = 0; i < args.length; i++) {
+			dirSufix += File.separator + args[i];
+		}
+
+		return new File(Utils.getUserRankingsDirectory() + dirSufix);
 	}
 
 	private static void appendExpertise(String userScoresFilename) throws IOException {
@@ -55,7 +74,7 @@ public class ExpertiseAggregatorTool {
 		String domain = userScoresFilename.substring(lastHyphen + 1, userScoresFilename.lastIndexOf("."));
 
 		// Get the first line.
-		BufferedReader reader = new BufferedReader(new FileReader(userScoresFilename));
+		BufferedReader reader = new BufferedReader(new FileReader(workingDir + File.separator + userScoresFilename));
 		String expertiseLine = reader.readLine();
 		reader.close();
 
@@ -68,11 +87,11 @@ public class ExpertiseAggregatorTool {
 
 	private static String stripScoreFromExpertiseLine(String expertiseLine) {
 		// Format: [Expertise=Score]
-		return expertiseLine.substring(expertiseLine.lastIndexOf("="), expertiseLine.length() - 1);
+		return expertiseLine.substring(expertiseLine.lastIndexOf("=") + 1, expertiseLine.length() - 1);
 	}
 
 	private static FileWriter createFileWriterForDomain(String domain) throws IOException {
-		return new FileWriter(getScoresOutputFileFor(domain));
+		return new FileWriter(getScoresOutputFileFor(domain), true);
 	}
 
 	private static void createOutputExpertiseFiles() throws IOException {
@@ -82,6 +101,6 @@ public class ExpertiseAggregatorTool {
 	}
 
 	private static File getScoresOutputFileFor(String domain) {
-		return new File(domain + "-scores.txt");
+		return new File(workingDir + File.separator + domain + "-scores.log");
 	}
 }

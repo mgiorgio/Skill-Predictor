@@ -40,23 +40,27 @@ public class DirectLuceneBasedUserProfileCreator implements RawSkillDataProcesso
 
 				final String input = rawSkillData.getContents();
 
-				TokenStream ts;
-				ts = analyzer.tokenStream(Utils.Globals.CONTENTS_FIELD, input);
+				if (input != null) {
 
-				CharTermAttribute termAtt = ts.addAttribute(CharTermAttribute.class);
+					TokenStream ts;
+					ts = analyzer.tokenStream(Utils.Globals.CONTENTS_FIELD, input);
 
-				try {
-					ts.reset(); // Resets this stream to the beginning.
-								// (Required)
-					while (ts.incrementToken()) {
-						userProfileBuilder.increment(termAtt.toString());
+					CharTermAttribute termAtt = ts.addAttribute(CharTermAttribute.class);
+
+					try {
+						ts.reset(); // Resets this stream to the beginning.
+									// (Required)
+						while (ts.incrementToken()) {
+							userProfileBuilder.increment(termAtt.toString());
+						}
+						ts.end(); // Perform end-of-stream operations, e.g. set
+									// the
+									// final
+									// offset.
+					} finally {
+						ts.close(); // Release resources associated with this
+									// stream.
 					}
-					ts.end(); // Perform end-of-stream operations, e.g. set the
-								// final
-								// offset.
-				} finally {
-					ts.close(); // Release resources associated with this
-								// stream.
 				}
 			}
 		} catch (IOException e) {

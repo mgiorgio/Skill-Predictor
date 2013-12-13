@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +21,11 @@ import edu.uci.ics.githubuserskills.profile.DictionaryManager;
 import edu.uci.ics.githubuserskills.profile.DirectLuceneBasedUserProfileCreator;
 import edu.uci.ics.githubuserskills.profile.ProfileTotalTermFrequencyCalculator;
 import edu.uci.ics.githubuserskills.profile.RawSkillDataProcessor;
-import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 import edu.uci.ics.githubuserskills.profile.UserProfile;
 import edu.uci.ics.githubuserskills.profile.UserRankingCollector;
-import edu.uci.ics.githubuserskills.profile.UserRankingEntry;
 import edu.uci.ics.githubuserskills.ranking.export.UserRankingFileExporter;
 import edu.uci.ics.githubuserskills.ranking.export.strategy.FilterEmptyRankingsStrategy;
-import edu.uci.ics.githubuserskills.ranking.stats.IntraDomainStatsCalculator;
+import edu.uci.ics.githubuserskills.ranking.stats.ProfileStatsCalculator;
 
 /**
  * @author matias
@@ -51,20 +51,18 @@ public class Launcher {
 			MongoDBDataRetriever dataRetriever = new MongoDBDataRetriever(userRankingCollector);
 			dataRetriever.initialize();
 
-			if (isSingleAuthor(args)) {
-				String author = authorInArguments(args);
-				console.info("Profiling author {}", author);
-				dataRetriever.retrieve(author);
+			if (isFixedNumberOfUsers(args)) {
+				String[] authors = authorsInArguments(args);
+				console.info("Profiling authors {}", StringUtils.join(authors));
+				dataRetriever.retrieve(Arrays.asList(authors), new LinkedList<String>());
 			} else {
-				List<String> rankedAuthors = collectUsersAlreadyRanked();
-				console.info("Profiling all authors ({} excluded)", rankedAuthors.size());
-				dataRetriever.retrieveExcluding(rankedAuthors);
+				dataRetriever.retrieve();
 			}
 
 			// List<String> logins = Arrays.asList("parkr", "mattr-");
 			// dataRetriever.retrieve(logins, new ArrayList<String>());
 
-			calculateIntraDomainStats(userRankingCollector, totalTermFreqCalculator);
+			calculateUserStats(userRankingCollector, totalTermFreqCalculator);
 
 			// printTotalDomainFreqs(totalTermFreqCalculator);
 
@@ -96,29 +94,8 @@ public class Launcher {
 		}
 	}
 
-	private static void calculateIntraDomainStats(UserRankingCollector userRankingCollector, ProfileTotalTermFrequencyCalculator totalTermFreqCalculator) {
-		IntraDomainStatsCalculator.calculateIntraDomainStats(userRankingCollector.getUserProfiles().values(), totalTermFreqCalculator.getTotalProfile());
-	}
-
-	private static void printUserProfileStats(UserRankingCollector userRankingCollector) {
-		for (UserProfile eachUserProfile : userRankingCollector.getUserProfiles().values()) {
-			System.out.println("=====User Profile Stats [" + eachUserProfile.getUser() + "]=====");
-
-			for (UserDomainRanking eachRanking : eachUserProfile.getDomainRankings().values()) {
-				System.out.println("Expertise [" + eachRanking.getDomain() + "]: " + eachUserProfile.getStats().getDomainIndex(eachRanking.getDomain()).getExpertise());
-			}
-		}
-	}
-
-	private static void printTotalDomainFreqs(ProfileTotalTermFrequencyCalculator totalTermFreqCalculator) {
-		UserProfile totalProfile = totalTermFreqCalculator.getTotalProfile();
-
-		for (Entry<String, UserDomainRanking> eachRanking : totalProfile.getDomainRankings().entrySet()) {
-			System.out.println("===========" + eachRanking.getValue().getDomain() + "===========");
-			for (UserRankingEntry eachTerm : eachRanking.getValue().getSortedTerms()) {
-				System.out.println(eachTerm);
-			}
-		}
+	private static void calculateUserStats(UserRankingCollector userRankingCollector, ProfileTotalTermFrequencyCalculator totalTermFreqCalculator) {
+		ProfileStatsCalculator.calculateProfileStats(userRankingCollector.getUserProfiles().values(), totalTermFreqCalculator.getTotalProfile());
 	}
 
 	private static ProfileTotalTermFrequencyCalculator buildTotalTermFrequencyCalculator(RawSkillDataProcessor fileExporter) throws IOException {
@@ -146,11 +123,11 @@ public class Launcher {
 		return authors;
 	}
 
-	private static String authorInArguments(String[] args) {
-		return args[0];
+	private static String[] authorsInArguments(String[] args) {
+		return args;
 	}
 
-	private static boolean isSingleAuthor(String[] args) {
+	private static boolean isFixedNumberOfUsers(String[] args) {
 		return args.length > 0;
 	}
 }

@@ -50,8 +50,10 @@ public class ContentDAO {
 		// DBCollection commitTable = helper.getTable("commits", database);
 		DBCollection commitTable = getTable("commits");
 
+		// TODO Implement projections to reduce required bandwidth.
 		BasicDBObject commitSearchQuery = new BasicDBObject("author.login", login);
-		DBCursor commitCursor = MongoDBHelper.findData(commitSearchQuery, commitTable, null);
+		BasicDBObject projection = createProjection("commit", "author", "files");
+		DBCursor commitCursor = MongoDBHelper.findData(commitSearchQuery, commitTable, projection);
 
 		try {
 			while (commitCursor.hasNext()) {
@@ -61,15 +63,11 @@ public class ContentDAO {
 					commit.setAuthor(login);
 				else
 					continue;
-				if (((DBObject) commitObject.get("commit")).get("message") != null)
-					commit.setCommit_message(((DBObject) commitObject.get("commit")).get("message").toString());
+				Object commitMessageDBObject = ((DBObject) commitObject.get("commit")).get("message");
+				if (commitMessageDBObject != null)
+					commit.setCommit_message(commitMessageDBObject.toString());
 				else
 					commit.setCommit_message(null);
-
-				if (commitObject.get("comments_url") != null)
-					commit.setComments_url(commitObject.get("comments_url").toString());
-				else
-					commit.setComments_url(null);
 
 				BasicDBList fileList = (BasicDBList) commitObject.get("files");
 
@@ -77,8 +75,9 @@ public class ContentDAO {
 					processPatches(commit, fileList);
 				}
 
-				if (((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date") != null)
-					commit.setTime(((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date").toString());
+				Object dateDBObject = ((DBObject) ((DBObject) commitObject.get("commit")).get("author")).get("date");
+				if (dateDBObject != null)
+					commit.setTime(dateDBObject.toString());
 				else
 					commit.setTime(null);
 
@@ -89,6 +88,17 @@ public class ContentDAO {
 		}
 
 		return commitList;
+	}
+
+	private BasicDBObject createProjection(String... fields) {
+		BasicDBObject projection = new BasicDBObject();
+		projection.put("_id", 0);
+
+		for (int i = 0; i < fields.length; i++) {
+			projection.put(fields[i], 1);
+		}
+
+		return projection;
 	}
 
 	private void processPatches(Commit commit, BasicDBList fileList) {
@@ -143,7 +153,9 @@ public class ContentDAO {
 		List<Comments> issueCommentList = new LinkedList<Comments>();
 		DBCollection issueCommentsTable = getTable("issue_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
-		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, issueCommentsTable, null);
+
+		BasicDBObject projection = createProjection("user", "body", "created_at");
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, issueCommentsTable, projection);
 
 		try {
 			while (cursor.hasNext()) {
@@ -155,12 +167,16 @@ public class ContentDAO {
 					comment.setAuthor(login);
 				else
 					continue;
-				if (obj.get("body") != null)
-					comment.setComment(obj.get("body").toString());
+
+				Object bodyDBObject = obj.get("body");
+				if (bodyDBObject != null)
+					comment.setComment(bodyDBObject.toString());
 				else
 					comment.setComment(null);
-				if (obj.get("created_at") != null)
-					comment.setTime(obj.get("created_at").toString());
+
+				Object timeDBObject = obj.get("created_at");
+				if (timeDBObject != null)
+					comment.setTime(timeDBObject.toString());
 				else
 					comment.setTime(null);
 
@@ -182,7 +198,9 @@ public class ContentDAO {
 		List<Comments> PullRequestCommentList = new LinkedList<Comments>();
 		DBCollection pullRequestCommentsTable = getTable("pull_request_comments");
 		BasicDBObject commitSearchQuery = new BasicDBObject("user.login", login);
-		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, pullRequestCommentsTable, null);
+
+		BasicDBObject projection = createProjection("user", "body", "created_at");
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, pullRequestCommentsTable, projection);
 
 		try {
 			while (cursor.hasNext()) {
@@ -194,12 +212,14 @@ public class ContentDAO {
 					comment.setAuthor(login);
 				else
 					continue;
-				if (obj.get("body") != null)
-					comment.setComment(obj.get("body").toString());
+				Object bodyDBObject = obj.get("body");
+				if (bodyDBObject != null)
+					comment.setComment(bodyDBObject.toString());
 				else
 					comment.setComment(null);
-				if (obj.get("created_at") != null)
-					comment.setTime(obj.get("created_at").toString());
+				Object timeDBObject = obj.get("created_at");
+				if (timeDBObject != null)
+					comment.setTime(timeDBObject.toString());
 				else
 					comment.setTime(null);
 
@@ -224,7 +244,9 @@ public class ContentDAO {
 		// BasicDBObject commitSearchQuery = new BasicDBObject("user",
 		// authorDBObject);
 		BasicDBObject commitSearchQuery = new BasicDBObject("user", login);
-		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, commitCommentsTable, null);
+
+		BasicDBObject projection = createProjection("user", "body", "created_at");
+		DBCursor cursor = MongoDBHelper.findData(commitSearchQuery, commitCommentsTable, projection);
 
 		try {
 			while (cursor.hasNext()) {
@@ -236,12 +258,14 @@ public class ContentDAO {
 					comment.setAuthor(login);
 				else
 					continue;
-				if (obj.get("body") != null)
-					comment.setComment(obj.get("body").toString());
+				Object bodyDBObject = obj.get("body");
+				if (bodyDBObject != null)
+					comment.setComment(bodyDBObject.toString());
 				else
 					comment.setComment(null);
-				if (obj.get("created_at") != null)
-					comment.setTime(obj.get("created_at").toString());
+				Object timeDBObject = obj.get("created_at");
+				if (timeDBObject != null)
+					comment.setTime(timeDBObject.toString());
 				else
 					comment.setTime(null);
 

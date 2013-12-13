@@ -10,7 +10,7 @@ import edu.uci.ics.githubuserskills.profile.UserDomainRanking;
 
 /**
  * @author matias
- *
+ * 
  */
 public class Utils {
 
@@ -47,9 +47,15 @@ public class Utils {
 		return USERDATA + File.separator + RANKINGS;
 	}
 
-	public static String getUserDomainResultsFile(UserDomainRanking domainRanking) {
+	public static String getUserProfileResultsFile(UserDomainRanking domainRanking) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(Utils.getUserRankingsDirectory()).append(File.separator).append(domainRanking.getAuthor()).append("-").append(domainRanking.getDomain()).append(".txt");
+		return builder.toString();
+	}
+
+	public static String getUserInterDomainResultsFile(String user) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Utils.getUserRankingsDirectory()).append(File.separator).append(user).append("-").append("interdomain").append(".log");
 		return builder.toString();
 	}
 

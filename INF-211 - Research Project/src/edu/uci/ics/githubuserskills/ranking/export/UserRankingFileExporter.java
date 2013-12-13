@@ -39,12 +39,15 @@ public class UserRankingFileExporter {
 				exportUserRankingDomain(eachUserRanking, stats);
 			}
 		}
+		if (stats) {
+			exportInterDomainAnalysis(userProfile);
+		}
 	}
 
 	private void exportUserRankingDomain(UserDomainRanking domainRanking, boolean stats) throws IOException {
 		List<UserRankingEntry> sortedTerms = domainRanking.getSortedTerms();
 
-		String fileName = Utils.getUserDomainResultsFile(domainRanking);
+		String fileName = Utils.getUserProfileResultsFile(domainRanking);
 		File exportFile = new File(fileName);
 
 		FileUtils.touch(exportFile);
@@ -52,7 +55,8 @@ public class UserRankingFileExporter {
 		FileWriter writer = new FileWriter(exportFile);
 		try {
 			if (stats) {
-				writer.write(String.format("[Expertise=%.4f]\n", domainRanking.getDomainStats().getExpertise()));
+				writer.write(String.format("[Score=%.4f]\n", domainRanking.getDomainStats().getScore()));
+				writer.write(String.format("[Contribution to portfolio=%.4f]\n", domainRanking.getDomainStats().getProfileWeight()));
 			}
 			for (UserRankingEntry termFreq : sortedTerms) {
 				writer.write(String.format("%s: %s\n", termFreq.getTerm(), termFreq.getFrequency()));
@@ -62,4 +66,31 @@ public class UserRankingFileExporter {
 		}
 		console.info("User Profile for [{}:{}] created in [{}].", domainRanking.getAuthor(), domainRanking.getDomain(), fileName);
 	}
-}
+
+	private void exportInterDomainAnalysis(UserProfile userProfile) throws IOException {
+
+		StringBuilder builder = new StringBuilder();
+		for (UserDomainRanking eachDomainRanking : userProfile.getDomainRankings().values()) {
+			if (eachDomainRanking.getDomainStats().getProfileWeight() > 0) {
+				builder.append(String.format("%s=%.4f]\n", eachDomainRanking.getDomain(), eachDomainRanking.getDomainStats().getProfileWeight()));
+			}
+		}
+
+		if (builder.length() > 0) {
+
+			String fileName = Utils.getUserInterDomainResultsFile(userProfile.getUser());
+			File exportFile = new File(fileName);
+
+			FileUtils.touch(exportFile);
+
+			FileWriter writer = new FileWriter(exportFile);
+
+			try {
+				writer.write(builder.toString());
+			} finally {
+				writer.close();
+			}
+		}
+
+	}
+};

@@ -33,7 +33,7 @@
     <appender-ref ref="file" />
   </logger>
 
-  <logger name="edu.uci.ics" level="INFO">
+  <logger name="edu.uci.ics" level="ERROR">
   	<appender-ref ref="STDOUT" />
     <appender-ref ref="file" />
   </logger>
