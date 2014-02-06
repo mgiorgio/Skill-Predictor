@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<config>
+	<profiles>
+		<profile>
+			<name>Database</name>
+			<dictionary>cfg/database.txt</dictionary>
+		</profile>
+		<profile>
+			<name>.Net</name>
+			<dictionary>cfg/DotNet.txt</dictionary>
+		</profile>
+		<profile>
+			<name>Java</name>
+			<dictionary>cfg/Java.txt</dictionary>
+		</profile>
+		<profile>
+			<name>Web</name>
+			<dictionary>cfg/Web.txt</dictionary>
+		</profile>
+	</profiles>
+</config>
